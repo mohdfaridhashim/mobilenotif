@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+        <title>Event Man System</title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
+    </head>
+    <body>
+        <div data-role="page">
+            <div data-role="header" data-position="fixed">
+                <h1>Login</h1>
+            </div>
+
+            <div data-role="main" class="ui-content">
+                <input id="username" type="text" placeholder="Enter Username">
+                <input id="password" type="password" placeholder="Enter Password">
+                <button onclick="login();">Login</button>
+                <a href="#pagetwo" id="page_two_link"></a>
+            </div>
+
+            <div data-role="footer" data-position="fixed">
+                <h1>Made by @Farid Hashim</h1>
+            </div>
+        </div> 
+
+        <div data-role="page" id="pagetwo">
+            <div data-role="header" data-position="fixed">
+                <h1>Posts</h1>
+            </div>
+
+            <div data-role="main" class="ui-content">
+                <ul data-role="listview" id="posts">                 
+                </ul>
+            </div>
+
+            <div data-role="footer" data-position="fixed">
+                <h1>Made by @Farid Hashim</h1>
+            </div>
+        </div>
+
+        <div data-role="page" id="pagethree">
+            <div data-role="header" data-position="fixed">
+                <h1>Detail</h1>
+            </div>
+
+            <div data-role="main" class="ui-content">
+                <ul data-role="listview" id="posts">                 
+                </ul>
+            </div>
+
+            <div data-role="footer" data-position="fixed">
+                <h1>Made by @Farid Hashim</h1>
+            </div>
+        </div>  
+
+        <form name="formName">
+            <input type=hidden id="ucapan" name="ucapan" value="Wall Street! Money Never Sleep"/>
+        </form>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script>
+            function fetch_and_display_posts()
+            {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories=18");
+                xhr.onload = function(){
+                    var posts_array = JSON.parse(xhr.responseText);
+                    console.log(posts_array);
+                    var html = "";  
+
+                    for(var count = 0; count < posts_array.length; count++)
+                    {
+                        var title = posts_array[count].title.rendered;
+                        var link = posts_array[count].link;
+                        var date = posts_array[count].date;
+                        //var image = posts_array[count].link;
+                        //console.log(detail);
+                        //var title = detail.title.
+                        //var title = posts_array[count][0];
+                        //var link = posts_array[count][1];
+                        //var date = posts_array[count][2];
+                        //var image = posts_array[count][3];
+
+                       html = html + "<li>" + "<a href='javascript:open_browser(\"" + link + "\")'>" + "<h2>" + title + "</h2>" + "<p>" + date + "</p></a></li>";
+                    }
+
+                    document.getElementById("posts").innerHTML = html;
+                    $("#posts").listview("refresh");
+                }
+                xhr.send();
+            }
+
+            function login()
+            {
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+                if(username == "")
+                {
+                    alert("Please enter username", null, "Username Missing", "OK");
+                    return;
+                }
+
+                if(password == "")
+                {
+                    alert("Please enter password", null, "Password Missing", "OK");  
+                    return;
+                }
+
+                saveInClient(utoa(username+":"+password));
+                $("#ucapan").val(localStorage.nano);
+                $.ajax({
+                    type: "GET",
+                    url: "http://social.zackseen.com/wp-json/wp/v2/posts/30",
+                    dataType: 'json',
+                    async: false,
+                    headers: {
+                        "Authorization": "Basic " + localStorage.nano
+                    },
+                    statusCode: {
+                          200: function (response) {
+                            fetch_and_display_posts();
+                            $("#page_two_link").click();
+                          },
+                          403 : function (response) {
+                            alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+                          }
+                    },
+                  //data: '{ "data" }',
+                    success: function (){}
+                });
+                // var xhr = new XMLHttpRequest();
+                // xhr.open("POST", "http://social.zackseen.com/wp-json/wp/v2/posts/30");
+                // beforeSend: function (xhr) {
+                //     //xhr.setRequestHeader ("Authorization", "Basic " + btoa(username + ":" + password));
+                //     xhr.setRequestHeader("Authorization", 'Basic ' + nano);
+                // };
+                // //xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                // xhr.onload = function(){
+                //     console.log(xhr.status);
+                //     if(xhr.status != "200") {
+                //         alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+                //     }else {
+                //         fetch_and_display_posts();
+                //         $("#page_two_link").click();
+                //     }
+                // }   
+                // xhr.send();
+            }
+
+            function utoa(str) {
+                return window.btoa(str);
+            }
+
+            function saveInClient(str) {
+                if (typeof(Storage) !== "undefined") {
+                    // Code for localStorage/sessionStorage.
+                    localStorage.setItem("nano", str);
+                } 
+            }
+
+            function open_browser(link)
+            {
+                window.open(link, '_blank', 'location=yes');
+            }
+        </script>
+    </body>
+</html>
