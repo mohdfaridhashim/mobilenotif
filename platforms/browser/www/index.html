@@ -32,21 +32,33 @@
             <div data-role="main" class="ui-content">
                 <ul data-role="listview" id="posts">                 
                 </ul>
+                <a href="#pagethree" id="page_three_link"></a>
             </div>
 
             <div data-role="footer" data-position="fixed">
                 <h1>Made by @Farid Hashim</h1>
+                <div data-role="navbar">
+                  <ul>
+                    <li><a href="#">Logout</a></li>
+                  </ul>
+                </div>
             </div>
         </div>
 
         <div data-role="page" id="pagethree">
             <div data-role="header" data-position="fixed">
-                <h1>Detail</h1>
+                <h1 id="content_title">Detail</h1>
             </div>
 
             <div data-role="main" class="ui-content">
-                <ul data-role="listview" id="posts">                 
-                </ul>
+                <div id="content_date"></div>
+                <br />
+                <div id="content_page"></div>
+                <br />
+                <fieldset class="ui-grid-a">
+                <div class="ui-block-a"><a href="#" class="ui-btn" data-rel="back">Go Back</a></div>
+                <div class="ui-block-b"><button type="submit" data-theme="b">Join</button></div>     
+            </fieldset>
             </div>
 
             <div data-role="footer" data-position="fixed">
@@ -55,13 +67,48 @@
         </div>  
 
         <form name="formName">
-            <input type=hidden id="ucapan" name="ucapan" value="Wall Street! Money Never Sleep"/>
+            <input type=hidden id="ucapan" name="ucapan" value=""/>
+            <input type=hidden id="postid" name="postid" value=""/>
         </form>
         <script type="text/javascript" src="cordova.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script>
+            $( ".linkdata" ).click(function() {
+                var id = $( this ).attr("data-id");
+                opendetail(id);
+            });
+
+            function testpanggil(id)
+            {
+                alert('test');
+                //var id = $( this ).attr("data-id");
+                console.log(id);
+            }
+
+            function opendetail(id) {
+
+                console.log(id);
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
+                xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
+                xhr.onload = function(){
+                    var detail_data = JSON.parse(xhr.responseText);
+                    var title = detail_data.title.rendered;
+                    var date = detail_data.date;
+                    var id = detail_data.id;
+                    var content = detail_data.content.rendered;
+
+                    document.getElementById("content_title").innerHTML = title;
+                    document.getElementById("content_page").innerHTML = content;
+                    document.getElementById("content_date").innerHTML = date;
+                    
+                }
+                xhr.send();
+                $("#page_three_link").click();
+            }
+
             function fetch_and_display_posts()
             {
                 var xhr = new XMLHttpRequest();
@@ -76,15 +123,9 @@
                         var title = posts_array[count].title.rendered;
                         var link = posts_array[count].link;
                         var date = posts_array[count].date;
-                        //var image = posts_array[count].link;
+                        var id = posts_array[count].id;
                         //console.log(detail);
-                        //var title = detail.title.
-                        //var title = posts_array[count][0];
-                        //var link = posts_array[count][1];
-                        //var date = posts_array[count][2];
-                        //var image = posts_array[count][3];
-
-                       html = html + "<li>" + "<a href='javascript:open_browser(\"" + link + "\")'>" + "<h2>" + title + "</h2>" + "<p>" + date + "</p></a></li>";
+                       html = html + "<li>" + "<a href='#' data-id='"+id+"' onclick=\"opendetail("+id+");\">" + "<h2>" + title + "</h2></a></li>";
                     }
 
                     document.getElementById("posts").innerHTML = html;
