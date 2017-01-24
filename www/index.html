@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
     </head>
     <body>
-        <div data-role="page">
+        <div data-role="page" id="pageone">
             <div data-role="header" data-position="fixed">
                 <h1>Login</h1>
             </div>
@@ -32,16 +32,15 @@
             <div data-role="main" class="ui-content">
                 <ul data-role="listview" id="posts">                 
                 </ul>
-                <a href="#pagethree" id="page_three_link"></a>
             </div>
 
             <div data-role="footer" data-position="fixed">
-                <h1>Made by @Farid Hashim</h1>
                 <div data-role="navbar">
                   <ul>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="#" onclick="logOut();">Logout</a></li>
                   </ul>
                 </div>
+                <h1>Made by @Farid Hashim</h1>
             </div>
         </div>
 
@@ -62,6 +61,11 @@
             </div>
 
             <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                  <ul>
+                    <li><a href="#" onclick="logOut();">Logout</a></li>
+                  </ul>
+                </div>
                 <h1>Made by @Farid Hashim</h1>
             </div>
         </div>  
@@ -69,12 +73,20 @@
         <form name="formName">
             <input type=hidden id="ucapan" name="ucapan" value=""/>
             <input type=hidden id="postid" name="postid" value=""/>
+            <a href="#pagethree" id="page_three_link"></a>
+            <a href="#pageone" id="page_one_link"></a>
         </form>
         <script type="text/javascript" src="cordova.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script>
+
+            function logOut() {
+
+                localStorage.removeItem("nano");
+                $("#page_one_link").click();
+            }
 
             function openDetail(id) {
 
@@ -83,6 +95,7 @@
                 xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
                 xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
                 xhr.onload = function(){
+
                     var detail_data = JSON.parse(xhr.responseText);
                     var title = detail_data.title.rendered;
                     var date = detail_data.date;
@@ -91,10 +104,9 @@
                     document.getElementById("content_title").innerHTML = title;
                     document.getElementById("content_page").innerHTML = content;
                     document.getElementById("content_date").innerHTML = date;
-                    
+                    $("#page_three_link").click();
                 }
                 xhr.send();
-                $("#page_three_link").click();
             }
 
             function fetchListPost() {
@@ -126,7 +138,7 @@
                 var username = document.getElementById("username").value;
                 var password = document.getElementById("password").value;
                 if(username == "") {
-                    
+
                     alert("Please enter username", null, "Username Missing", "OK");
                     return;
                 }
