@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
     </head>
     <body>
-        <div data-role="page">
+        <div data-role="page" id="pageone">
             <div data-role="header" data-position="fixed">
                 <h1>Login</h1>
             </div>
@@ -32,16 +32,15 @@
             <div data-role="main" class="ui-content">
                 <ul data-role="listview" id="posts">                 
                 </ul>
-                <a href="#pagethree" id="page_three_link"></a>
             </div>
 
             <div data-role="footer" data-position="fixed">
-                <h1>Made by @Farid Hashim</h1>
                 <div data-role="navbar">
                   <ul>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="#" onclick="logOut();">Logout</a></li>
                   </ul>
                 </div>
+                <h1>Made by @Farid Hashim</h1>
             </div>
         </div>
 
@@ -62,6 +61,11 @@
             </div>
 
             <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                  <ul>
+                    <li><a href="#" onclick="logOut();">Logout</a></li>
+                  </ul>
+                </div>
                 <h1>Made by @Farid Hashim</h1>
             </div>
         </div>  
@@ -69,88 +73,108 @@
         <form name="formName">
             <input type=hidden id="ucapan" name="ucapan" value=""/>
             <input type=hidden id="postid" name="postid" value=""/>
+            <input type=hidden id="postData" name="postData" value=""/>
+            <a href="#pagethree" id="page_three_link"></a>
+            <a href="#pageone" id="page_one_link"></a>
         </form>
         <script type="text/javascript" src="cordova.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script>
-            $( ".linkdata" ).click(function() {
-                var id = $( this ).attr("data-id");
-                opendetail(id);
-            });
 
-            function testpanggil(id)
-            {
-                alert('test');
-                //var id = $( this ).attr("data-id");
-                console.log(id);
-            }
+            function getData(request) {
 
-            function opendetail(id) {
-
-                console.log(id);
+                var url = 'http://social.zackseen.com/wp-json/wp/v2/';
                 var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
+                xhr.open("GET", url+request);
                 xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
                 xhr.onload = function(){
-                    var detail_data = JSON.parse(xhr.responseText);
-                    var title = detail_data.title.rendered;
-                    var date = detail_data.date;
-                    var id = detail_data.id;
-                    var content = detail_data.content.rendered;
 
-                    document.getElementById("content_title").innerHTML = title;
-                    document.getElementById("content_page").innerHTML = content;
-                    document.getElementById("content_date").innerHTML = date;
-                    
+                   $("#postData").val(xhr.responseText);
                 }
                 xhr.send();
-                $("#page_three_link").click();
             }
 
-            function fetch_and_display_posts()
-            {
+            function logOut() {
+
+                localStorage.removeItem("nano");
+                $("#page_one_link").click();
+            }
+
+            function openDetail(id) {
+
+                console.log(id);
+                getData("posts/"+id);
+                console.log($("#postData").val());
+                var detail_data = $("#postData").val();
+                var title = detail_data.title.rendered;
+                var date = detail_data.date;
+                var id = detail_data.id;
+                var content = detail_data.content.rendered;
+                document.getElementById("content_title").innerHTML = title;
+                document.getElementById("content_page").innerHTML = content;
+                document.getElementById("content_date").innerHTML = date;
+                $("#page_three_link").click();
+                // var xhr = new XMLHttpRequest();
+                // xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
+                // xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
+                // xhr.onload = function(){
+
+                //     var detail_data = JSON.parse(xhr.responseText);
+                //     var title = detail_data.title.rendered;
+                //     var date = detail_data.date;
+                //     var id = detail_data.id;
+                //     var content = detail_data.content.rendered;
+                //     document.getElementById("content_title").innerHTML = title;
+                //     document.getElementById("content_page").innerHTML = content;
+                //     document.getElementById("content_date").innerHTML = date;
+                //     $("#page_three_link").click();
+                // }
+                // xhr.send();
+            }
+
+            function fetchListPost() {
+
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories=18");
                 xhr.onload = function(){
+
                     var posts_array = JSON.parse(xhr.responseText);
                     console.log(posts_array);
                     var html = "";  
 
-                    for(var count = 0; count < posts_array.length; count++)
-                    {
+                    for(var count = 0; count < posts_array.length; count++) {
+
                         var title = posts_array[count].title.rendered;
                         var link = posts_array[count].link;
                         var date = posts_array[count].date;
                         var id = posts_array[count].id;
-                        //console.log(detail);
-                       html = html + "<li>" + "<a href='#' data-id='"+id+"' onclick=\"opendetail("+id+");\">" + "<h2>" + title + "</h2></a></li>";
+                        html = html + "<li>" + "<a href='#' data-id='"+id+"' onclick=\"openDetail("+id+");\">" + "<h2>" + title + "</h2></a></li>";
                     }
-
                     document.getElementById("posts").innerHTML = html;
                     $("#posts").listview("refresh");
                 }
                 xhr.send();
             }
 
-            function login()
-            {
+            function login() {
+
                 var username = document.getElementById("username").value;
                 var password = document.getElementById("password").value;
-                if(username == "")
-                {
+                if(username == "") {
+
                     alert("Please enter username", null, "Username Missing", "OK");
                     return;
                 }
 
-                if(password == "")
-                {
+                if(password == "") {
+
                     alert("Please enter password", null, "Password Missing", "OK");  
                     return;
                 }
 
-                saveInClient(utoa(username+":"+password));
+                saveInClient('nano',utoa(username+":"+password));
                 $("#ucapan").val(localStorage.nano);
                 $.ajax({
                     type: "GET",
@@ -162,48 +186,34 @@
                     },
                     statusCode: {
                           200: function (response) {
-                            fetch_and_display_posts();
+
+                            fetchListPost();
                             $("#page_two_link").click();
                           },
                           403 : function (response) {
+
                             alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
                           }
                     },
-                  //data: '{ "data" }',
                     success: function (){}
                 });
-                // var xhr = new XMLHttpRequest();
-                // xhr.open("POST", "http://social.zackseen.com/wp-json/wp/v2/posts/30");
-                // beforeSend: function (xhr) {
-                //     //xhr.setRequestHeader ("Authorization", "Basic " + btoa(username + ":" + password));
-                //     xhr.setRequestHeader("Authorization", 'Basic ' + nano);
-                // };
-                // //xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                // xhr.onload = function(){
-                //     console.log(xhr.status);
-                //     if(xhr.status != "200") {
-                //         alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
-                //     }else {
-                //         fetch_and_display_posts();
-                //         $("#page_two_link").click();
-                //     }
-                // }   
-                // xhr.send();
             }
 
             function utoa(str) {
+
                 return window.btoa(str);
             }
 
-            function saveInClient(str) {
+            function saveInClient(key,value) {
+
                 if (typeof(Storage) !== "undefined") {
                     // Code for localStorage/sessionStorage.
-                    localStorage.setItem("nano", str);
+                    localStorage.setItem("key", value);
                 } 
             }
 
-            function open_browser(link)
-            {
+            function openBrowser(link) {
+
                 window.open(link, '_blank', 'location=yes');
             }
         </script>

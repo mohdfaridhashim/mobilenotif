@@ -149,7 +149,7 @@
                     return;
                 }
 
-                saveInClient(utoa(username+":"+password));
+                saveInClient('nano',utoa(username+":"+password));
                 $("#ucapan").val(localStorage.nano);
                 $.ajax({
                     type: "GET",
@@ -179,11 +179,11 @@
                 return window.btoa(str);
             }
 
-            function saveInClient(str) {
+            function saveInClient(key,value) {
 
                 if (typeof(Storage) !== "undefined") {
                     // Code for localStorage/sessionStorage.
-                    localStorage.setItem("nano", str);
+                    localStorage.setItem("key", value);
                 } 
             }
 
