@@ -3,11 +3,11 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-        <title>Sitepoint - PhoneGap App using WordPress</title>
+        <title>Event Man System</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
     </head>
     <body>
-        <div data-role="page">
+        <div data-role="page" id="pageone">
             <div data-role="header" data-position="fixed">
                 <h1>Login</h1>
             </div>
@@ -20,13 +20,18 @@
             </div>
 
             <div data-role="footer" data-position="fixed">
-                <h1>Made by @narayanprusty</h1>
+                <h1>Made by @Farid Hashim</h1>
             </div>
         </div> 
 
         <div data-role="page" id="pagetwo">
             <div data-role="header" data-position="fixed">
                 <h1>Posts</h1>
+                <ul>
+                    <li><a href="a.html">One</a></li>
+                    <li><a href="b.html">Two</a></li>
+                    <li><a href="b.html">Two</a></li>
+                </ul>
             </div>
 
             <div data-role="main" class="ui-content">
@@ -35,13 +40,164 @@
             </div>
 
             <div data-role="footer" data-position="fixed">
-                <h1>Made by @narayanprusty</h1>
+                <div data-role="navbar">
+                  <ul>
+                    <li><a href="#" onclick="logOut();">Logout</a></li>
+                  </ul>
+                </div>
+                <h1>Made by @Farid Hashim</h1>
             </div>
-        </div> 
+        </div>
 
+        <div data-role="page" id="pagethree">
+            <div data-role="header" data-position="fixed">
+                <h1 id="content_title">Detail</h1>
+            </div>
+
+            <div data-role="main" class="ui-content">
+                <div id="content_date"></div>
+                <br />
+                <div id="content_page"></div>
+                <br />
+                <fieldset class="ui-grid-a">
+                <div class="ui-block-a"><a href="#" class="ui-btn" data-rel="back">Go Back</a></div>
+                <div class="ui-block-b"><button type="submit" data-theme="b">Join</button></div>     
+            </fieldset>
+            </div>
+
+            <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                  <ul>
+                    <li><a href="#" onclick="logOut();">Logout</a></li>
+                  </ul>
+                </div>
+                <h1>Made by @Farid Hashim</h1>
+            </div>
+        </div>  
+
+        <form name="formName">
+            <input type=hidden id="ucapan" name="ucapan" value=""/>
+            <input type=hidden id="postid" name="postid" value=""/>
+            <a href="#pagethree" id="page_three_link"></a>
+            <a href="#pageone" id="page_one_link"></a>
+            <a href="#pagefour" id="page_four_link"></a>
+            <a href="#pagefive" id="page_five_link"></a>
+        </form>
         <script type="text/javascript" src="cordova.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+        <script>
+
+            function logOut() {
+
+                localStorage.removeItem("nano");
+                $("#page_one_link").click();
+            }
+
+            function openDetail(id) {
+
+                console.log(id);
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
+                xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
+                xhr.onload = function(){
+
+                    var detail_data = JSON.parse(xhr.responseText);
+                    var title = detail_data.title.rendered;
+                    var date = detail_data.date;
+                    var id = detail_data.id;
+                    var content = detail_data.content.rendered;
+                    document.getElementById("content_title").innerHTML = title;
+                    document.getElementById("content_page").innerHTML = content;
+                    document.getElementById("content_date").innerHTML = date;
+                    $("#page_three_link").click();
+                }
+                xhr.send();
+            }
+
+            function fetchListPost(id) {
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories="+id);
+                xhr.onload = function(){
+
+                    var posts_array = JSON.parse(xhr.responseText);
+                    console.log(posts_array);
+                    var html = "";  
+
+                    for(var count = 0; count < posts_array.length; count++) {
+
+                        var title = posts_array[count].title.rendered;
+                        var link = posts_array[count].link;
+                        var date = posts_array[count].date;
+                        var id = posts_array[count].id;
+                        html = html + "<li>" + "<a href='#' data-id='"+id+"' onclick=\"openDetail("+id+");\">" + "<h2>" + title + "</h2></a></li>";
+                    }
+                    document.getElementById("posts").innerHTML = html;
+                    $("#posts").listview("refresh");
+                }
+                xhr.send();
+            }
+
+            function login() {
+
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+                if(username == "") {
+
+                    alert("Please enter username", null, "Username Missing", "OK");
+                    return;
+                }
+
+                if(password == "") {
+
+                    alert("Please enter password", null, "Password Missing", "OK");  
+                    return;
+                }
+
+                saveInClient('nano',utoa(username+":"+password));
+                $("#ucapan").val(localStorage.nano);
+                $.ajax({
+                    type: "GET",
+                    url: "http://social.zackseen.com/wp-json/wp/v2/posts/30",
+                    dataType: 'json',
+                    async: false,
+                    headers: {
+                        "Authorization": "Basic " + localStorage.nano
+                    },
+                    statusCode: {
+                          200: function (response) {
+
+                            fetchListPost('18');
+                            $("#page_two_link").click();
+                          },
+                          403 : function (response) {
+
+                            alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+                          }
+                    },
+                    success: function (){}
+                });
+            }
+
+            function utoa(str) {
+
+                return window.btoa(str);
+            }
+
+            function saveInClient(key,value) {
+
+                if (typeof(Storage) !== "undefined") {
+                    // Code for localStorage/sessionStorage.
+                    localStorage.setItem("key", value);
+                } 
+            }
+
+            function openBrowser(link) {
+
+                window.open(link, '_blank', 'location=yes');
+            }
+        </script>
     </body>
 </html>

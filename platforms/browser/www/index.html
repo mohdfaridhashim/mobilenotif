@@ -16,7 +16,6 @@
                 <input id="username" type="text" placeholder="Enter Username">
                 <input id="password" type="password" placeholder="Enter Password">
                 <button onclick="login();">Login</button>
-                <a href="#pagetwo" id="page_two_link"></a>
             </div>
 
             <div data-role="footer" data-position="fixed">
@@ -26,7 +25,14 @@
 
         <div data-role="page" id="pagetwo">
             <div data-role="header" data-position="fixed">
-                <h1>Posts</h1>
+                <h1 id="cat_title">Posts</h1>
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#" onclick="navigate();">Event</a></li>
+                        <li><a href="#" onclick="navigate();">Announcement</a></li>
+                        <li><a href="#" onclick="logOut();">Logout</a></li>
+                    </ul>
+                </div>
             </div>
 
             <div data-role="main" class="ui-content">
@@ -35,11 +41,6 @@
             </div>
 
             <div data-role="footer" data-position="fixed">
-                <div data-role="navbar">
-                  <ul>
-                    <li><a href="#" onclick="logOut();">Logout</a></li>
-                  </ul>
-                </div>
                 <h1>Made by @Farid Hashim</h1>
             </div>
         </div>
@@ -61,11 +62,6 @@
             </div>
 
             <div data-role="footer" data-position="fixed">
-                <div data-role="navbar">
-                  <ul>
-                    <li><a href="#" onclick="logOut();">Logout</a></li>
-                  </ul>
-                </div>
                 <h1>Made by @Farid Hashim</h1>
             </div>
         </div>  
@@ -73,27 +69,20 @@
         <form name="formName">
             <input type=hidden id="ucapan" name="ucapan" value=""/>
             <input type=hidden id="postid" name="postid" value=""/>
-            <input type=hidden id="postData" name="postData" value=""/>
-            <a href="#pagethree" id="page_three_link"></a>
             <a href="#pageone" id="page_one_link"></a>
+            <a href="#pagetwo" id="page_two_link"></a>
+            <a href="#pagethree" id="page_three_link"></a>
         </form>
         <script type="text/javascript" src="cordova.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script>
+            function navigate(id) {
 
-            function getData(request) {
-
-                var url = 'http://social.zackseen.com/wp-json/wp/v2/';
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", url+request);
-                xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
-                xhr.onload = function(){
-
-                   $("#postData").val(xhr.responseText);
-                }
-                xhr.send();
+                fetchCatDetail(id);
+                fetchListPost(id);
+                $("#page_two_link").click();
             }
 
             function logOut() {
@@ -105,39 +94,42 @@
             function openDetail(id) {
 
                 console.log(id);
-                getData("posts/"+id);
-                console.log($("#postData").val());
-                var detail_data = $("#postData").val();
-                var title = detail_data.title.rendered;
-                var date = detail_data.date;
-                var id = detail_data.id;
-                var content = detail_data.content.rendered;
-                document.getElementById("content_title").innerHTML = title;
-                document.getElementById("content_page").innerHTML = content;
-                document.getElementById("content_date").innerHTML = date;
-                $("#page_three_link").click();
-                // var xhr = new XMLHttpRequest();
-                // xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
-                // xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
-                // xhr.onload = function(){
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
+                xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
+                xhr.onload = function(){
 
-                //     var detail_data = JSON.parse(xhr.responseText);
-                //     var title = detail_data.title.rendered;
-                //     var date = detail_data.date;
-                //     var id = detail_data.id;
-                //     var content = detail_data.content.rendered;
-                //     document.getElementById("content_title").innerHTML = title;
-                //     document.getElementById("content_page").innerHTML = content;
-                //     document.getElementById("content_date").innerHTML = date;
-                //     $("#page_three_link").click();
-                // }
-                // xhr.send();
+                    var detail_data = JSON.parse(xhr.responseText);
+                    var title = detail_data.title.rendered;
+                    var date = detail_data.date;
+                    var id = detail_data.id;
+                    var content = detail_data.content.rendered;
+                    document.getElementById("content_title").innerHTML = title;
+                    document.getElementById("content_page").innerHTML = content;
+                    document.getElementById("content_date").innerHTML = date;
+                    $("#page_three_link").click();
+                }
+                xhr.send();
             }
 
-            function fetchListPost() {
+            function fetchCatDetail(id) {
+
 
                 var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories=18");
+                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/categories/"+id);
+                xhr.onload = function(){
+                    
+                    var category_title = '';
+                    category_title = JSON.parse(xhr.responseText);
+                    document.getElementById("cat_title").innerHTML = category_title.name;
+                }
+                xhr.send();
+            }
+
+            function fetchListPost(id) {
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories="+id);
                 xhr.onload = function(){
 
                     var posts_array = JSON.parse(xhr.responseText);
@@ -187,7 +179,7 @@
                     statusCode: {
                           200: function (response) {
 
-                            fetchListPost();
+                            navigate('18');
                             $("#page_two_link").click();
                           },
                           403 : function (response) {
