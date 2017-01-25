@@ -5,6 +5,7 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
         <title>Event Man System</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
+        <link rel="stylesheet" href="css/index.css">
     </head>
     <body>
         <div data-role="page" id="pageone">
@@ -28,9 +29,9 @@
                 <h1 id="cat_title">Posts</h1>
                 <div data-role="navbar">
                     <ul>
-                        <li><a href="#" onclick="navigate();">Event</a></li>
-                        <li><a href="#" onclick="navigate();">Announcement</a></li>
-                        <li><a href="#" onclick="logOut();">Logout</a></li>
+                        <li><a href="#" onclick="navigate('18','Y');">Activity</a></li>
+                        <li><a href="#" onclick="navigate('19','Y');">Event</a></li>
+                        <li><a href="#" onclick="navigate('21','N');">Announcement</a></li>
                     </ul>
                 </div>
             </div>
@@ -41,6 +42,11 @@
             </div>
 
             <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#" onclick="logOut();">Logout</a></li>
+                    </ul>
+                </div>
                 <h1>Made by @Farid Hashim</h1>
             </div>
         </div>
@@ -55,13 +61,20 @@
                 <br />
                 <div id="content_page"></div>
                 <br />
-                <fieldset class="ui-grid-a">
-                <div class="ui-block-a"><a href="#" class="ui-btn" data-rel="back">Go Back</a></div>
-                <div class="ui-block-b"><button type="submit" data-theme="b">Join</button></div>     
-            </fieldset>
             </div>
 
             <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#" data-rel="back">Go Back</a></li>
+                        <li id="join_btn"><a href="#" onclick="postComment();" data-theme="b">Join</a></li>
+                    </ul>
+                </div>
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#" onclick="logOut();">Logout</a></li>
+                    </ul>
+                </div>
                 <h1>Made by @Farid Hashim</h1>
             </div>
         </div>  
@@ -78,10 +91,54 @@
         <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script>
-            function navigate(id) {
+            function postComment() {
 
+                console.log(localStorage.nano);
+                var postingid = $("#postid").val();
+                var formData = {content:"Join",post:postingid};
+                $.ajax({
+                    url : "http://social.zackseen.com/wp-json/wp/v2/comments",
+                    type: "POST",
+                    data : formData,
+                    dataType: 'json',
+                    async: false,
+                    headers: {
+                        "Authorization": "Basic " + localStorage.nano
+                    },
+                    statusCode: {
+                          403 : function (response) {
+
+                            alert("Sorry, invalid authentication", null, "Uh Oh!", "Try Again");
+                          },
+                          400 : function (response) {
+
+                            alert("Sorry, not found", null, "Uh Oh!", "Try Again");
+                          },
+                          500 : function (response) {
+
+                            alert("Sorry, system has error.", null, "Uh Oh!", "Try Again");
+                          },
+                          401 : function (response) {
+
+                            alert("Sorry, invalid authentication. Please login", null, "Uh Oh!", "Try Again");
+                          },
+                          409 : function (response) {
+
+                            alert("Sorry, Look like you are already joined.", null, "Uh Oh!", "Try Again");
+                          }
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        //data - response from server
+                        alert("Thank.", null, "Hola!", "Success");
+                    }
+                });
+            }
+
+            function navigate(id,visible) {
+
+                validateUser();
                 fetchCatDetail(id);
-                fetchListPost(id);
+                fetchListPost(id,visible);
                 $("#page_two_link").click();
             }
 
@@ -91,8 +148,15 @@
                 $("#page_one_link").click();
             }
 
-            function openDetail(id) {
+            function validateUser() {
+                if(localStorage.nano == ''){
+                    logOut();
+                }
+            }
 
+            function openDetail(id,visible) {
+
+                validateUser();
                 console.log(id);
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
@@ -104,9 +168,15 @@
                     var date = detail_data.date;
                     var id = detail_data.id;
                     var content = detail_data.content.rendered;
+                    $("#postid").val(id);
                     document.getElementById("content_title").innerHTML = title;
                     document.getElementById("content_page").innerHTML = content;
                     document.getElementById("content_date").innerHTML = date;
+                    if(visible == 'N') {
+                        $('#join_btn').css('display', 'none');
+                    }else {
+                        $('#join_btn').css('display', 'block');
+                    } 
                     $("#page_three_link").click();
                 }
                 xhr.send();
@@ -118,7 +188,7 @@
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/categories/"+id);
                 xhr.onload = function(){
-                    
+
                     var category_title = '';
                     category_title = JSON.parse(xhr.responseText);
                     document.getElementById("cat_title").innerHTML = category_title.name;
@@ -126,7 +196,7 @@
                 xhr.send();
             }
 
-            function fetchListPost(id) {
+            function fetchListPost(id,visible) {
 
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories="+id);
@@ -142,7 +212,7 @@
                         var link = posts_array[count].link;
                         var date = posts_array[count].date;
                         var id = posts_array[count].id;
-                        html = html + "<li>" + "<a href='#' data-id='"+id+"' onclick=\"openDetail("+id+");\">" + "<h2>" + title + "</h2></a></li>";
+                        html = html + "<li>" + "<a href='#' data-id='"+id+"' onclick=\"openDetail("+id+",'"+visible+"');\">" + "<h2>" + title + "</h2></a></li>";
                     }
                     document.getElementById("posts").innerHTML = html;
                     $("#posts").listview("refresh");
@@ -179,7 +249,7 @@
                     statusCode: {
                           200: function (response) {
 
-                            navigate('18');
+                            navigate('18','Y');
                             $("#page_two_link").click();
                           },
                           403 : function (response) {
@@ -200,7 +270,7 @@
 
                 if (typeof(Storage) !== "undefined") {
                     // Code for localStorage/sessionStorage.
-                    localStorage.setItem("key", value);
+                    localStorage.setItem(key, value);
                 } 
             }
 
