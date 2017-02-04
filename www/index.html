@@ -5,6 +5,7 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
         <title>Event Man System</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/index.css">
     </head>
     <body>
@@ -26,27 +27,46 @@
 
         <div data-role="page" id="pagetwo">
             <div data-role="header" data-position="fixed">
-                <h1 id="cat_title">Posts</h1>
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="#" onclick="navigate('18','Y');">Activity</a></li>
-                        <li><a href="#" onclick="navigate('19','Y');">Event</a></li>
-                        <li><a href="#" onclick="navigate('21','N');">Announcement</a></li>
-                    </ul>
+                <!--- <h1 id="cat_title">Posts</h1> -->
+                <div class="navbar navbar-inverse">
+                  <div class="container-fluid">
+                    <div class="navbar-header">
+                      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>                        
+                      </button>
+                      <a class="navbar-brand" href="#">Volunterring System</a>
+                    </div>
+                    <div class="collapse navbar-collapse collapse" id="myNavbar">
+                      <ul class="nav navbar-nav">
+                        <li class="active"><a href="#" onclick="navigate('5','Y');">Home</a></li>
+                        <li><a href="#">Page 2</a></li>
+                        <li><a href="#">Page 3</a></li>
+                      </ul>
+                      <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#" onclick="logOut();"><span class="glyphicon glyphicon-user"></span>Sign Out</a></li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
             </div>
 
             <div data-role="main" class="ui-content">
-                <ul data-role="listview" id="posts">                 
-                </ul>
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#" onclick="navigate('5','Y');">Info</a></li>
+                        <li><a href="#" onclick="navigate('6','Y');">Event</a></li>
+                        <li><a href="#" onclick="navigate('7','Y');">Volunteer</a></li>
+                    </ul>
+                </div>
+                <div class="ui-content">
+                    <ul data-role="listview" id="posts">                 
+                    </ul>
+                </div>
             </div>
 
             <div data-role="footer" data-position="fixed">
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="#" onclick="logOut();">Logout</a></li>
-                    </ul>
-                </div>
                 <h1>Made by @Farid Hashim</h1>
             </div>
         </div>
@@ -82,6 +102,7 @@
         <form name="formName">
             <input type=hidden id="ucapan" name="ucapan" value=""/>
             <input type=hidden id="postid" name="postid" value=""/>
+            <input type=hidden id="urlgeneral" name="urlgeneral" value="http://blast.zackseen.com"/>
             <a href="#pageone" id="page_one_link"></a>
             <a href="#pagetwo" id="page_two_link"></a>
             <a href="#pagethree" id="page_three_link"></a>
@@ -89,15 +110,51 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script>
+
+            function getProfile() {
+                //get user profile
+                validateUser();
+                saveInClient('nano',utoa(username+":"+password));
+                $("#ucapan").val(localStorage.nano);
+                var urlgeneral = $('#urlgeneral').val();
+                $.ajax({
+                    type: "GET",
+                    url: urlgeneral+"/wp-json/wp/v2/users/me?context=edit",
+                    dataType: 'json',
+                    async: false,
+                    headers: {
+                        "Authorization": "Basic " + localStorage.nano
+                    },
+                    statusCode: {
+                          200: function (response) {
+
+                            navigate('18','Y');
+                            $("#page_two_link").click();
+                          },
+                          403 : function (response) {
+
+                            alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+                          },
+                          401 : function (response) {
+
+                            alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+                          }
+                    },
+                    success: function (){}
+                });
+            }
+            
             function postComment() {
 
                 console.log(localStorage.nano);
                 var postingid = $("#postid").val();
+                var urlgeneral = $('#urlgeneral').val();
                 var formData = {content:"Join",post:postingid};
                 $.ajax({
-                    url : "http://social.zackseen.com/wp-json/wp/v2/comments",
+                    url : urlgeneral+"/wp-json/wp/v2/comments",
                     type: "POST",
                     data : formData,
                     dataType: 'json',
@@ -129,7 +186,50 @@
                     },
                     success: function(data, textStatus, jqXHR) {
                         //data - response from server
-                        alert("Thank.", null, "Hola!", "Success");
+                        alert("Thank you.", null, "Hola!", "Success");
+                    }
+                });
+            }
+
+            function showFeatureImg(imgID) {
+
+                console.log(localStorage.nano);
+                var postingid = $("#postid").val();
+                var urlgeneral = $('#urlgeneral').val();
+                $.ajax({
+                    url : urlgeneral+"/wp-json/wp/v2/comments",
+                    type: "GET",
+                    data : "",
+                    dataType: 'json',
+                    async: false,
+                    headers: {
+                        "Authorization": "Basic " + localStorage.nano
+                    },
+                    statusCode: {
+                          403 : function (response) {
+
+                            alert("Sorry, invalid authentication", null, "Uh Oh!", "Try Again");
+                          },
+                          400 : function (response) {
+
+                            alert("Sorry, not found", null, "Uh Oh!", "Try Again");
+                          },
+                          500 : function (response) {
+
+                            alert("Sorry, system has error.", null, "Uh Oh!", "Try Again");
+                          },
+                          401 : function (response) {
+
+                            alert("Sorry, invalid authentication. Please login", null, "Uh Oh!", "Try Again");
+                          },
+                          409 : function (response) {
+
+                            alert("Sorry, Look like you are already joined.", null, "Uh Oh!", "Try Again");
+                          }
+                    },
+                    success: function(data, textStatus, jqXHR) {
+                        //data - response from server
+                        alert("Thank you.", null, "Hola!", "Success");
                     }
                 });
             }
@@ -159,7 +259,8 @@
                 validateUser();
                 console.log(id);
                 var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
+                var urlgeneral = $('#urlgeneral').val();
+                xhr.open("GET", urlgeneral+"/wp-json/wp/v2/posts/"+id);
                 xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
                 xhr.onload = function(){
 
@@ -186,12 +287,13 @@
 
 
                 var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/categories/"+id);
+                var urlgeneral = $('#urlgeneral').val();
+                xhr.open("GET", urlgeneral+"/wp-json/wp/v2/categories/"+id);
                 xhr.onload = function(){
 
                     var category_title = '';
                     category_title = JSON.parse(xhr.responseText);
-                    document.getElementById("cat_title").innerHTML = category_title.name;
+                    //document.getElementById("cat_title").innerHTML = category_title.name;
                 }
                 xhr.send();
             }
@@ -199,7 +301,8 @@
             function fetchListPost(id,visible) {
 
                 var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories="+id);
+                var urlgeneral = $('#urlgeneral').val();
+                xhr.open("GET", urlgeneral+"/wp-json/wp/v2/posts?categories="+id);
                 xhr.onload = function(){
 
                     var posts_array = JSON.parse(xhr.responseText);
@@ -238,9 +341,10 @@
 
                 saveInClient('nano',utoa(username+":"+password));
                 $("#ucapan").val(localStorage.nano);
+                var urlgeneral = $('#urlgeneral').val();
                 $.ajax({
                     type: "GET",
-                    url: "http://social.zackseen.com/wp-json/wp/v2/posts/30",
+                    url: urlgeneral+"/wp-json/wp/v2/users/me",
                     dataType: 'json',
                     async: false,
                     headers: {
@@ -249,10 +353,14 @@
                     statusCode: {
                           200: function (response) {
 
-                            navigate('18','Y');
+                            navigate('5','Y');
                             $("#page_two_link").click();
                           },
                           403 : function (response) {
+
+                            alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+                          },
+                          401 : function (response) {
 
                             alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
                           }
