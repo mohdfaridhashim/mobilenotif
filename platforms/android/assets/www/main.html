@@ -44,7 +44,7 @@
 	</div>
 	<br />
 	<div class="row">
-	      	<div class="list-group" id="posted">
+	      	<div class="list-group">
 			  <div class="list-group-item-new">
 			    <div class="panel">
 			      <div class="panel-heading-date"><span class="glyphicon glyphicon-time"></span> Posted on 05-02-2017 9:30 am</div>
@@ -79,8 +79,7 @@
   <a href="#myPage" title="To Top">
     <span class="glyphicon glyphicon-chevron-up"></span>
   </a>
-  <p>BACK TO TOP</a></p>
-  <p style="display:none;">Developed by Farid Hashim</p>
+  <p>Bootstrap Theme Made By <a href="http://www.w3schools.com" title="Visit w3schools">www.w3schools.com</a></p>
 </footer>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -119,55 +118,6 @@ $(document).ready(function(){
         }
     });
   });
-
-  getPostDatabyCategory();
-
-  function getPostDatabyCategory() {
-  	$.ajax({
-        type: "GET",
-        url: "http://blast.zackseen.com/wp-json/wp/v2/posts?categories=5",
-        dataType: 'json',
-        async: false,
-        headers: {
-            "Authorization": "Basic " + localStorage.nano
-        },
-        statusCode: {
-              403 : function (response) {
-                alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
-              },
-              401 : function (response) {
-                alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
-              }
-        },
-        success: function (posts_array){
-        	console.log(posts_array);
-        	var html = "";  
-        	for(var count = 0; count < posts_array.length; count++) {
-
-                var title = posts_array[count].title.rendered;
-                var link = posts_array[count].link;
-                var date = posts_array[count].date;
-                var id = posts_array[count].id;
-                var previewcontent = posts_array[count].excerpt.rendered;
-                var featureimg = posts_array[count].featured_media;
-                //html = html + "<div class=\"list-group-item-new\"><div class=\"panel\">" + "<a href='#' data-id='"+id+"' onclick=\"openDetail("+id+",'"+visible+"');\">" + "<h2>" + title + "</h2></a></div>";
-                html = html + "<div class=\"list-group-item-new\">";
-                html = html + "<div class=\"panel\">";
-                html = html + "<div class=\"panel-heading-date\">";
-                html = html + "<span class=\"glyphicon glyphicon-time\"></span> Posted on 05-02-2017 9:30 am</div>";
-                html = html + "<div class=\"panel-heading-post\"><img src=\"img/tower.jpg\" class=\"img-responsive\" alt=\"Cinque Terre\" ></div>";
-                html = html + "<div class=\"panel-body-post\">";
-                html = html + "<h4 class=\"list-group-item-heading\">";
-                html = html + "Second List Group Item Heading";
-                html = html + "<span class=\"glyphicon glyphicon-chevron-right pull-right\"></span></h4>";
-                html = html + "<p class=\"list-group-item-text\">";
-                html = html + "List Group Item Text";
-                html = html + "</p></div></div></div>";
-            }
-            document.getElementById("posted").innerHTML = html;
-        }
-    });
-  }
 })
 </script>
 

@@ -176,3 +176,37 @@
         font-size: 150px;
     }
   }
+
+  .the-container{
+  	width:100%;
+  }
+
+  .list-group-item-new {
+  	position:relative;
+  	margin-bottom:-1px;
+  	background-color:#fff;
+
+  }
+
+  .panel-heading-post {
+      color: #fff !important;
+      padding: 25px;
+      border-bottom: 1px solid transparent;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+  }
+
+  .panel-heading-date {
+      color: #333 !important;
+      padding: 10px 0px 0px 25px;
+  }
+
+  .panel-heading-noimg {
+      display:none;
+  }
+
+  .panel-body-post {
+  	  padding: 10px 20px 20px 25px;
+  }

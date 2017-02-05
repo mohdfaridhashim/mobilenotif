@@ -25,7 +25,9 @@ function login() {
         },
         statusCode: {
               403 : function (response) {
-
+                alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+              },
+              401 : function (response) {
                 alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
               }
         },
