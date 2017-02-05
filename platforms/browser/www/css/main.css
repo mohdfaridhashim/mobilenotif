@@ -188,6 +188,12 @@
 
   }
 
+  .list-group-item-loading {
+  	margin-bottom:-1px;
+  	background-color:#fff;
+
+  }
+
   .panel-heading-post {
       color: #fff !important;
       padding: 25px;

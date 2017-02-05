@@ -17,7 +17,7 @@ function login() {
     saveInClient('nano',utoa(username+":"+password));
     $.ajax({
         type: "GET",
-        url: "http://blast.zackseen.com/wp-json/wp/v2/users/me",
+        url: serverUrl+"/wp-json/wp/v2/users/me",
         dataType: 'json',
         async: false,
         headers: {
@@ -33,7 +33,7 @@ function login() {
         },
         success: function (){
 
-        	saveInClient('categoryID',5);
+        	saveInClient('categoryID',info);
           	window.location.href = 'main.html';
         }
     });

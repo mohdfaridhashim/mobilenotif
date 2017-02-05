@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Theme Made By www.w3schools.com - No Copyright -->
-  <title>Bootstrap Theme Company Page</title>
+  <title>Volunteer System</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link href="css/css.css" rel="stylesheet" type="text/css">
   <link href="css/css2.css" rel="stylesheet" type="text/css">
   <link href="css/main.css" rel="stylesheet" type="text/css">
+  <link href="css/loading.css" rel="stylesheet" type="text/css">
 </head>
 <body id="myPage" data-spy="scroll" data-target=".navbar">
 
@@ -24,10 +24,10 @@
     </div>
     <div class="navbar-collapse collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#about">HOME</a></li>
-        <li><a href="#services">INFORMATION</a></li>
-        <li><a href="#portfolio">EVENT</a></li>
-        <li><a href="#pricing">VOLUNTEER</a></li>
+        <li><a href="#" onclick="gotoCatPage('info');">HOME</a></li>
+        <li><a href="#" onclick="gotoCatPage('info');">INFORMATION</a></li>
+        <li><a href="#" onclick="gotoCatPage('theevent');">EVENT</a></li>
+        <li><a href="#" onclick="gotoCatPage('vol');">VOLUNTEER</a></li>
         <li><a href="#" onclick="logOut();">SIGN OUT</a></li>
       </ul>
     </div>
@@ -37,39 +37,30 @@
 <div class="container-fluid">
 	<div class="row">
 		<ul class="nav nav-tabs">
-		  <li class="active"><a href="#">Information</a></li>
-		  <li><a href="#">Event</a></li>
-		  <li><a href="#">Volunteer</a></li>
+		  <li id="info" class="active"><a href="#" onclick="gotoCatPage('info');">Information</a></li>
+		  <li id="theevent" ><a href="#" onclick="gotoCatPage('theevent');">Event</a></li>
+		  <li id="vol" ><a href="#" onclick="gotoCatPage('vol');">Volunteer</a></li>
 		</ul>
 	</div>
 	<br />
 	<div class="row">
 	      	<div class="list-group" id="posted">
-			  <div class="list-group-item-new">
-			    <div class="panel">
-			      <div class="panel-heading-date"><span class="glyphicon glyphicon-time"></span> Posted on 05-02-2017 9:30 am</div>
-				  <div class="panel-heading-post"><img src="img/tower.jpg" class="img-responsive" alt="Cinque Terre" ></div>
-				  <div class="panel-body-post">
-				  	<h4 class="list-group-item-heading">Second List Group Item Heading <span class="glyphicon glyphicon-chevron-right pull-right"></span></h4>
-					<p class="list-group-item-text">List Group Item Text</p></div>
-				</div>
-			  </div>
-			  <div class="list-group-item-new">
-			    <div class="panel">
-			      <div class="panel-heading-date">05-02-2017 9:30 am</div>
-				  <div class="panel-heading-post"><img src="img/tower.jpg" class="img-responsive" alt="Cinque Terre" ></div>
-				  <div class="panel-body-post">
-				  	<h4 class="list-group-item-heading">Second List Group Item Heading <span class="glyphicon glyphicon-chevron-right pull-right"></span></h4>
-					<p class="list-group-item-text">List Group Item Text</p></div>
-				</div>
-			  </div>
-			  <div class="list-group-item-new">
-			    <div class="panel">
-			      <div class="panel-heading-date">05-02-2017 9:30 am</div>
-				  <div class="panel-heading-noimg"></div>
-				  <div class="panel-body-post">
-				  	<h4 class="list-group-item-heading">Second List Group Item Heading <span class="glyphicon glyphicon-chevron-right pull-right"></span></h4>
-					<p class="list-group-item-text">List Group Item Text</p></div>
+			  <div class="list-group-item-loading">
+			    <div class="" id="loading">
+			    	<p><p><p><p><p>
+					<div class="row">
+						<div id="loader">
+				    		<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="lading"></div>
+						</div>
+					</div>
 				</div>
 			  </div>
 	</div>
@@ -120,54 +111,10 @@ $(document).ready(function(){
     });
   });
 
-  getPostDatabyCategory();
+  defaultCatPage(localStorage.categoryID);
+  getPostDatabyCategory(localStorage.categoryID);
+  
 
-  function getPostDatabyCategory() {
-  	$.ajax({
-        type: "GET",
-        url: "http://blast.zackseen.com/wp-json/wp/v2/posts?categories=5",
-        dataType: 'json',
-        async: false,
-        headers: {
-            "Authorization": "Basic " + localStorage.nano
-        },
-        statusCode: {
-              403 : function (response) {
-                alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
-              },
-              401 : function (response) {
-                alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
-              }
-        },
-        success: function (posts_array){
-        	console.log(posts_array);
-        	var html = "";  
-        	for(var count = 0; count < posts_array.length; count++) {
-
-                var title = posts_array[count].title.rendered;
-                var link = posts_array[count].link;
-                var date = posts_array[count].date;
-                var id = posts_array[count].id;
-                var previewcontent = posts_array[count].excerpt.rendered;
-                var featureimg = posts_array[count].featured_media;
-                //html = html + "<div class=\"list-group-item-new\"><div class=\"panel\">" + "<a href='#' data-id='"+id+"' onclick=\"openDetail("+id+",'"+visible+"');\">" + "<h2>" + title + "</h2></a></div>";
-                html = html + "<div class=\"list-group-item-new\">";
-                html = html + "<div class=\"panel\">";
-                html = html + "<div class=\"panel-heading-date\">";
-                html = html + "<span class=\"glyphicon glyphicon-time\"></span> Posted on 05-02-2017 9:30 am</div>";
-                html = html + "<div class=\"panel-heading-post\"><img src=\"img/tower.jpg\" class=\"img-responsive\" alt=\"Cinque Terre\" ></div>";
-                html = html + "<div class=\"panel-body-post\">";
-                html = html + "<h4 class=\"list-group-item-heading\">";
-                html = html + "Second List Group Item Heading";
-                html = html + "<span class=\"glyphicon glyphicon-chevron-right pull-right\"></span></h4>";
-                html = html + "<p class=\"list-group-item-text\">";
-                html = html + "List Group Item Text";
-                html = html + "</p></div></div></div>";
-            }
-            document.getElementById("posted").innerHTML = html;
-        }
-    });
-  }
 })
 </script>
 
