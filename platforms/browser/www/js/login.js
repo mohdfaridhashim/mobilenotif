@@ -33,8 +33,7 @@ function login() {
         },
         success: function (){
 
-        	saveInClient('categoryID',info);
-          	window.location.href = 'main.html';
+        	gotoCatPage("info");
         }
     });
 }

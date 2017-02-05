@@ -93,8 +93,67 @@ function gotoCatPage(type) {
   	}
   }
 
-  function gotoPostPage() {
+  function gotoPostPage(postageID) {
 
+  	saveInClient('postdetailID',postageID);
+  	window.location.href = 'postpage.html';
+
+  }
+
+  function goBack() {
+  	window.location.href = 'main.html';
+  }
+
+  function getPostDetail(postageID) {
+
+  	var postagePageID = postageID;
+  	$.ajax({
+        type: "GET",
+        url: serverUrl+"/wp-json/wp/v2/posts/"+postagePageID,
+        dataType: 'json',
+        async: false,
+        headers: {
+            "Authorization": "Basic " + localStorage.nano
+        },
+        statusCode: {
+              403 : function (response) {
+                alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+              },
+              401 : function (response) {
+                alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
+              }
+        },
+        success: function (posts_array){
+        	console.log(posts_array);
+        	var html = ""; 
+
+                var title = posts_array.title.rendered;
+                var link = posts_array.link;
+                var date = posts_array.date;
+                var pid = posts_array.id;
+                var thecontent = posts_array.content.rendered;
+                var featureimg = posts_array.featured_media;
+                html = html + "<h1 id=\"thetitle\">";
+                html = html + title;
+                html = html + "</h1>";
+                html = html + "<hr>";
+                html = html + "<p><span class=\"glyphicon glyphicon-time\"></span><span id=\"thedate\"> Posted on ";
+                html = html + date;
+                html = html + "</span></p>";
+                html = html + "<hr>";
+                if(featureimg != '' || featureimg != Undefined) {
+                	getFeatureIMG(featureimg,pid+"-"+featureimg);
+                	html = html + "<img id=\"img-"+pid+"-"+featureimg+"\" src=\"img/tower.jpg\" class=\"img-responsive\" alt=\"Cinque Terre\" >";
+            	}else {
+            		html = html + "<br />";
+            	}
+                html = html + "<hr>";
+                html = html + "<div class=\"lead\" id=\"thecontent\">";
+                html = html + thecontent;
+                html = html + "</div>";
+            document.getElementById("postContent").innerHTML = html;
+        }
+    });
   }
 
   function getPostDatabyCategory(categoryID) {
@@ -131,7 +190,7 @@ function gotoCatPage(type) {
 	                var featureimg = posts_array[count].featured_media;
 
 	                html = html + "<div class=\"list-group-item-new\">";
-	                html = html + "<div class=\"panel\">";
+	                html = html + "<div class=\"panel\" onclick=\"gotoPostPage('"+pid+"');\">";
 	                html = html + "<div class=\"panel-heading-date\">";
 	                html = html + "<span class=\"glyphicon glyphicon-time\"></span> Posted on "+date+"</div>";
 	                if(featureimg != '' || featureimg != Undefined) {
@@ -145,9 +204,9 @@ function gotoCatPage(type) {
 	                html = html + "<h3 class=\"list-group-item-heading\">";
 	                html = html + title;
 	                html = html + "<span class=\"glyphicon glyphicon-chevron-right pull-right\"></span></h3>";
-	                html = html + "<p class=\"list-group-item-text\">";
+	                html = html + "<div class=\"list-group-item-text\">";
 	                html = html + previewcontent;
-	                html = html + "</p></div></div></div>";
+	                html = html + "</div></div></div></div>";
 	            }
         	}else {
         		html = html + "<div class=\"list-group-item-new\">";
@@ -157,9 +216,9 @@ function gotoCatPage(type) {
                 html = html + "<h3 class=\"list-group-item-heading\">";
                 html = html + "Sorry";
                 html = html + "</h3>";
-                html = html + "<p class=\"list-group-item-text\">";
+                html = html + "<div class=\"list-group-item-text\">";
                 html = html + "No record found.";
-                html = html + "</p></div></div></div>";
+                html = html + "</div></div></div></div>";
         	}
             document.getElementById("posted").innerHTML = html;
         }
