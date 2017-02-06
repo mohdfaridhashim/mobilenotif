@@ -43,17 +43,15 @@ function getFeatureIMG(id,pid) {
               }
         },
         success: function (posts_array){
+
         	console.log(posts_array);
         	var html = "";  
-        	for(var count = 0; count < posts_array.length; count++) {
+            var img = posts_array.media_details.sizes.medium_large.source_url;
+            console.log(img);
+            var alt = posts_array.alt_text;
+            saveInClient('theimg',img);
+            saveInClient('thealt',alt);
 
-                var img = posts_array[count].title.rendered;
-                var alt = posts_array[count].alt_text;
-                document.getElementById("img-"+postid).src = img;
-                document.getElementById("img-"+postid).alt = alt;
-
-            }
-            
         }
     });
 }
@@ -140,9 +138,9 @@ function gotoCatPage(type) {
             html = html + date;
             html = html + "</span></p>";
             html = html + "<hr>";
-            if(featureimg != '' || featureimg != Undefined) {
+            if(featureimg != '') {
             	getFeatureIMG(featureimg,pid+"-"+featureimg);
-            	html = html + "<img id=\"img-"+pid+"-"+featureimg+"\" src=\"img/tower.jpg\" class=\"img-responsive\" alt=\"Cinque Terre\" >";
+            	html = html + "<img id=\"img-"+pid+"-"+featureimg+"\" src=\""+localStorage.theimg+"\" class=\"img-responsive\" alt=\"Cinque Terre\" >";
         	}else {
         		html = html + "<br />";
         	}
@@ -150,6 +148,12 @@ function gotoCatPage(type) {
             html = html + "<div class=\"lead\" id=\"thecontent\">";
             html = html + thecontent;
             html = html + "</div>";
+            if(localStorage.categoryID == vol) {
+              html = html + "<button type=\"button\" class=\"btn btn-primary btn-block\" onclick=\"postComment();\">I Volunteer</button>";
+            }else {
+              html = html + "<button type=\"button\" class=\"btn btn-primary btn-block\" onclick=\"postComment();\">I Join</button>";
+            }
+            html = html + "<hr>";
             document.getElementById("postContent").innerHTML = html;
         }
     });
@@ -192,9 +196,9 @@ function gotoCatPage(type) {
 	                html = html + "<div class=\"panel\" onclick=\"gotoPostPage('"+pid+"');\">";
 	                html = html + "<div class=\"panel-heading-date\">";
 	                html = html + "<span class=\"glyphicon glyphicon-time\"></span> Posted on "+date+"</div>";
-	                if(featureimg != '' || featureimg != Undefined) {
+	                if(featureimg != '') {
 	                	getFeatureIMG(featureimg,pid+"-"+featureimg);
-	                	html = html + "<div class=\"panel-heading-post\"><img id=\"img-"+pid+"-"+featureimg+"\" src=\"img/tower.jpg\" class=\"img-responsive\" alt=\"Cinque Terre\" ></div>";
+	                	html = html + "<div class=\"panel-heading-post\"><img id=\"img-"+pid+"-"+featureimg+"\" src=\""+localStorage.theimg+"\" class=\"img-responsive\" alt=\"Cinque Terre\" ></div>";
 	                }else{
 	                	html = html + "<div class=\"panel-heading-noimg\"></div>";
 	                }
@@ -222,4 +226,105 @@ function gotoCatPage(type) {
             document.getElementById("posted").innerHTML = html;
         }
     });
+  }
+
+  function genModal(postageID) {
+
+  	var postagePageID = postageID;
+  	$.ajax({
+        type: "GET",
+        url: serverUrl+"/wp-json/wp/v2/tags?post="+postagePageID,
+        dataType: 'json',
+        async: false,
+        headers: {
+            "Authorization": "Basic " + localStorage.nano
+        },
+        statusCode: {
+              403 : function (response) {
+
+                alert("Sorry, invalid authentication", null, "Uh Oh!", "Try Again");
+              },
+              400 : function (response) {
+
+                alert("Sorry, not found", null, "Uh Oh!", "Try Again");
+              },
+              500 : function (response) {
+
+                alert("Sorry, system has error.", null, "Uh Oh!", "Try Again");
+              },
+              401 : function (response) {
+
+                alert("Sorry, invalid authentication. Please login", null, "Uh Oh!", "Try Again");
+              },
+              409 : function (response) {
+
+                alert("Sorry, Look like you are already joined.", null, "Uh Oh!", "Try Again");
+              }
+        },
+        success: function (posts_array) {
+        	console.log(posts_array);
+        	var html = ""; 
+          var theurl = posts_array[0].description;
+          console.log(theurl);
+          if(theurl != '') {
+            openBrowser(theurl);
+          }
+          
+        }
+    });
+  }
+
+  function openBrowser(link) {
+        console.log(link);
+        window.open(link, '_blank', 'location=yes');
+  }
+
+  function postComment() {
+
+      console.log(localStorage.nano);
+      var postingid = localStorage.postdetailID;
+      var comment = "Join";
+      if(localStorage.categoryID == vol) {
+        comment = "Volunteer";
+      }
+      var formData = {content:comment,post:postingid};
+      $.ajax({
+          url : serverUrl+"/wp-json/wp/v2/comments",
+          type: "POST",
+          data : formData,
+          dataType: 'json',
+          async: false,
+          headers: {
+              "Authorization": "Basic " + localStorage.nano
+          },
+          statusCode: {
+                403 : function (response) {
+
+                  alert("Sorry, invalid authentication", null, "Uh Oh!", "Try Again");
+                },
+                400 : function (response) {
+
+                  alert("Sorry, not found", null, "Uh Oh!", "Try Again");
+                },
+                500 : function (response) {
+
+                  alert("Sorry, system has error.", null, "Uh Oh!", "Try Again");
+                },
+                401 : function (response) {
+
+                  alert("Sorry, invalid authentication. Please login", null, "Uh Oh!", "Try Again");
+                },
+                409 : function (response) {
+
+                  alert("Sorry, Look like you are already joined.", null, "Uh Oh!", "Try Again");
+                }
+          },
+          success: function(data, textStatus, jqXHR) {
+              //data - response from server
+              alert("Thank.", null, "Hola!", "Success");
+              if(localStorage.categoryID == vol) {
+                  genModal(localStorage.postdetailID);
+              }
+          }
+      });
   }

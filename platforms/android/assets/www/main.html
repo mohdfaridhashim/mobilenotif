@@ -20,7 +20,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>                        
       </button>
-      <a class="navbar-brand" href="#myPage">Logo</a>
+      <a class="navbar-brand" href="#myPage"><img class="navbarImg img-responsive" src="img/logo-unisel.png" /></a>
     </div>
     <div class="navbar-collapse collapse" id="myNavbar">
       <ul class="nav navbar-nav navbar-right">
@@ -113,7 +113,7 @@ $(document).ready(function(){
 
   defaultCatPage(localStorage.categoryID);
   getPostDatabyCategory(localStorage.categoryID);
-  
+  $('img').addClass('img-responsive');
 
 })
 </script>
