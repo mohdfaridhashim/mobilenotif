@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Volunteer System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="css/css.css" rel="stylesheet" type="text/css">
+  <link href="css/css2.css" rel="stylesheet" type="text/css">
+  <link href="css/main.css" rel="stylesheet" type="text/css">
+  <link href="css/loading.css" rel="stylesheet" type="text/css">
+</head>
+<body id="myPage" data-spy="scroll" data-target=".navbar">
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#myPage"><img class="navbarImg img-responsive" src="img/logo-unisel.png" /></a>
+    </div>
+    <div class="navbar-collapse collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#" onclick="gotoCatPage('info');">HOME</a></li>
+        <li><a href="#" onclick="gotoCatPage('info');">INFORMATION</a></li>
+        <li><a href="#" onclick="gotoCatPage('theevent');">EVENT</a></li>
+        <li><a href="#" onclick="gotoCatPage('vol');">VOLUNTEER</a></li>
+        <li><a href="#" onclick="logOut();">SIGN OUT</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+	<div class="row">
+		<ul class="nav nav-tabs">
+		  <li id="info" class="active"><a href="#" onclick="gotoCatPage('info');">Information</a></li>
+		  <li id="theevent" ><a href="#" onclick="gotoCatPage('theevent');">Event</a></li>
+		  <li id="vol" ><a href="#" onclick="gotoCatPage('vol');">Volunteer</a></li>
+		</ul>
+	</div>
+	<br />
+	<div class="row">
+	      	<div class="list-group" id="posted">
+			  <div class="list-group-item-loading">
+			    <div class="" id="loading">
+			    	<p><p><p><p><p>
+					<div class="row">
+						<div id="loader">
+				    		<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="dot"></div>
+							<div class="lading"></div>
+						</div>
+					</div>
+				</div>
+			  </div>
+	</div>
+</div>
+
+<footer class="container-fluid text-center">
+  <a href="#myPage" title="To Top">
+    <span class="glyphicon glyphicon-chevron-up"></span>
+  </a>
+  <p>BACK TO TOP</a></p>
+  <p style="display:none;">Developed by Farid Hashim</p>
+</footer>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="http://api.zackseen.com/js/general.js"></script>
+<script>
+$(document).ready(function(){
+  // Add smooth scrolling to all links in navbar + footer link
+  $(".navbar a, footer a[href='#myPage']").on('click', function(event) {
+    // Make sure this.hash has a value before overriding default behavior
+    if (this.hash !== "") {
+      // Prevent default anchor click behavior
+      event.preventDefault();
+
+      // Store hash
+      var hash = this.hash;
+
+      // Using jQuery's animate() method to add smooth page scroll
+      // The optional number (900) specifies the number of milliseconds it takes to scroll to the specified area
+      $('html, body').animate({
+        scrollTop: $(hash).offset().top
+      }, 900, function(){
+   
+        // Add hash (#) to URL when done scrolling (default click behavior)
+        window.location.hash = hash;
+      });
+    } // End if
+  });
+  
+  $(window).scroll(function() {
+    $(".slideanim").each(function(){
+      var pos = $(this).offset().top;
+
+      var winTop = $(window).scrollTop();
+        if (pos < winTop + 600) {
+          $(this).addClass("slide");
+        }
+    });
+  });
+
+  defaultCatPage(localStorage.categoryID);
+  getPostDatabyCategory(localStorage.categoryID);
+  $('img').addClass('img-responsive');
+
+})
+</script>
+
+</body>
+</html>
