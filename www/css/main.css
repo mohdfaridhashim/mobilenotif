@@ -240,3 +240,17 @@
   text-align: left;
   vertical-align: middle;
 }
+
+.container-fluid-main {
+  /*padding: 60px 50px;*/
+  padding-top: 50px;
+  padding-bottom: 100%;
+  padding-left: 25px;
+  padding-right: 25px;
+  /*background-color: #f4511e; */
+}
+
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+}

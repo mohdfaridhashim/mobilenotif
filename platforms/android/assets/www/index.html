@@ -1,283 +1,31 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-        <title>Event Man System</title>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.css">
-        <link rel="stylesheet" href="css/index.css">
-    </head>
-    <body>
-        <div data-role="page" id="pageone">
-            <div data-role="header" data-position="fixed">
-                <h1>Login</h1>
-            </div>
-
-            <div data-role="main" class="ui-content">
-                <input id="username" type="text" placeholder="Enter Username">
-                <input id="password" type="password" placeholder="Enter Password">
-                <button onclick="login();">Login</button>
-            </div>
-
-            <div data-role="footer" data-position="fixed">
-                <h1>Made by @Farid Hashim</h1>
-            </div>
-        </div> 
-
-        <div data-role="page" id="pagetwo">
-            <div data-role="header" data-position="fixed">
-                <h1 id="cat_title">Posts</h1>
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="#" onclick="navigate('18','Y');">Activity</a></li>
-                        <li><a href="#" onclick="navigate('19','Y');">Event</a></li>
-                        <li><a href="#" onclick="navigate('21','N');">Announcement</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div data-role="main" class="ui-content">
-                <ul data-role="listview" id="posts">                 
-                </ul>
-            </div>
-
-            <div data-role="footer" data-position="fixed">
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="#" onclick="logOut();">Logout</a></li>
-                    </ul>
-                </div>
-                <h1>Made by @Farid Hashim</h1>
-            </div>
-        </div>
-
-        <div data-role="page" id="pagethree">
-            <div data-role="header" data-position="fixed">
-                <h1 id="content_title">Detail</h1>
-            </div>
-
-            <div data-role="main" class="ui-content">
-                <div id="content_date"></div>
-                <br />
-                <div id="content_page"></div>
-                <br />
-            </div>
-
-            <div data-role="footer" data-position="fixed">
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="#" data-rel="back">Go Back</a></li>
-                        <li id="join_btn"><a href="#" onclick="postComment();" data-theme="b">Join</a></li>
-                    </ul>
-                </div>
-                <div data-role="navbar">
-                    <ul>
-                        <li><a href="#" onclick="logOut();">Logout</a></li>
-                    </ul>
-                </div>
-                <h1>Made by @Farid Hashim</h1>
-            </div>
-        </div>  
-
-        <form name="formName">
-            <input type=hidden id="ucapan" name="ucapan" value=""/>
-            <input type=hidden id="postid" name="postid" value=""/>
-            <a href="#pageone" id="page_one_link"></a>
-            <a href="#pagetwo" id="page_two_link"></a>
-            <a href="#pagethree" id="page_three_link"></a>
-        </form>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.4.4/jquery.mobile-1.4.4.min.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script>
-            function postComment() {
-
-                console.log(localStorage.nano);
-                var postingid = $("#postid").val();
-                var formData = {content:"Join",post:postingid};
-                $.ajax({
-                    url : "http://social.zackseen.com/wp-json/wp/v2/comments",
-                    type: "POST",
-                    data : formData,
-                    dataType: 'json',
-                    async: false,
-                    headers: {
-                        "Authorization": "Basic " + localStorage.nano
-                    },
-                    statusCode: {
-                          403 : function (response) {
-
-                            alert("Sorry, invalid authentication", null, "Uh Oh!", "Try Again");
-                          },
-                          400 : function (response) {
-
-                            alert("Sorry, not found", null, "Uh Oh!", "Try Again");
-                          },
-                          500 : function (response) {
-
-                            alert("Sorry, system has error.", null, "Uh Oh!", "Try Again");
-                          },
-                          401 : function (response) {
-
-                            alert("Sorry, invalid authentication. Please login", null, "Uh Oh!", "Try Again");
-                          },
-                          409 : function (response) {
-
-                            alert("Sorry, Look like you are already joined.", null, "Uh Oh!", "Try Again");
-                          }
-                    },
-                    success: function(data, textStatus, jqXHR) {
-                        //data - response from server
-                        alert("Thank.", null, "Hola!", "Success");
-                    }
-                });
-            }
-
-            function navigate(id,visible) {
-
-                validateUser();
-                fetchCatDetail(id);
-                fetchListPost(id,visible);
-                $("#page_two_link").click();
-            }
-
-            function logOut() {
-
-                localStorage.removeItem("nano");
-                $("#page_one_link").click();
-            }
-
-            function validateUser() {
-                if(localStorage.nano == ''){
-                    logOut();
-                }
-            }
-
-            function openDetail(id,visible) {
-
-                validateUser();
-                console.log(id);
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts/"+id);
-                xhr.setRequestHeader("Authorization", 'Basic ' + localStorage.nano);
-                xhr.onload = function(){
-
-                    var detail_data = JSON.parse(xhr.responseText);
-                    var title = detail_data.title.rendered;
-                    var date = detail_data.date;
-                    var id = detail_data.id;
-                    var content = detail_data.content.rendered;
-                    $("#postid").val(id);
-                    document.getElementById("content_title").innerHTML = title;
-                    document.getElementById("content_page").innerHTML = content;
-                    document.getElementById("content_date").innerHTML = date;
-                    if(visible == 'N') {
-                        $('#join_btn').css('display', 'none');
-                    }else {
-                        $('#join_btn').css('display', 'block');
-                    } 
-                    $("#page_three_link").click();
-                }
-                xhr.send();
-            }
-
-            function fetchCatDetail(id) {
-
-
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/categories/"+id);
-                xhr.onload = function(){
-
-                    var category_title = '';
-                    category_title = JSON.parse(xhr.responseText);
-                    document.getElementById("cat_title").innerHTML = category_title.name;
-                }
-                xhr.send();
-            }
-
-            function fetchListPost(id,visible) {
-
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://social.zackseen.com/wp-json/wp/v2/posts?categories="+id);
-                xhr.onload = function(){
-
-                    var posts_array = JSON.parse(xhr.responseText);
-                    console.log(posts_array);
-                    var html = "";  
-
-                    for(var count = 0; count < posts_array.length; count++) {
-
-                        var title = posts_array[count].title.rendered;
-                        var link = posts_array[count].link;
-                        var date = posts_array[count].date;
-                        var id = posts_array[count].id;
-                        html = html + "<li>" + "<a href='#' data-id='"+id+"' onclick=\"openDetail("+id+",'"+visible+"');\">" + "<h2>" + title + "</h2></a></li>";
-                    }
-                    document.getElementById("posts").innerHTML = html;
-                    $("#posts").listview("refresh");
-                }
-                xhr.send();
-            }
-
-            function login() {
-
-                var username = document.getElementById("username").value;
-                var password = document.getElementById("password").value;
-                if(username == "") {
-
-                    alert("Please enter username", null, "Username Missing", "OK");
-                    return;
-                }
-
-                if(password == "") {
-
-                    alert("Please enter password", null, "Password Missing", "OK");  
-                    return;
-                }
-
-                saveInClient('nano',utoa(username+":"+password));
-                $("#ucapan").val(localStorage.nano);
-                $.ajax({
-                    type: "GET",
-                    url: "http://social.zackseen.com/wp-json/wp/v2/posts/30",
-                    dataType: 'json',
-                    async: false,
-                    headers: {
-                        "Authorization": "Basic " + localStorage.nano
-                    },
-                    statusCode: {
-                          200: function (response) {
-
-                            navigate('18','Y');
-                            $("#page_two_link").click();
-                          },
-                          403 : function (response) {
-
-                            alert("Wrong Username and Password", null, "Wrong Creds", "Try Again");
-                          }
-                    },
-                    success: function (){}
-                });
-            }
-
-            function utoa(str) {
-
-                return window.btoa(str);
-            }
-
-            function saveInClient(key,value) {
-
-                if (typeof(Storage) !== "undefined") {
-                    // Code for localStorage/sessionStorage.
-                    localStorage.setItem(key, value);
-                } 
-            }
-
-            function openBrowser(link) {
-
-                window.open(link, '_blank', 'location=yes');
-            }
-        </script>
-    </body>
+<html lang="en">
+<head>
+  <title>Volunteer System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="css/css.css" rel="stylesheet" type="text/css">
+  <link href="css/css2.css" rel="stylesheet" type="text/css">
+  <link href="css/login.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="container">
+        <div class="card card-container">
+            <img id="profile-img" class="profile-img-card" src="img/avatar_2x.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <div class="form-signin">
+                <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+                <input type="password" id="password" class="form-control" placeholder="Password" required>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" onclick="login();">Sign in</button>
+                <p style="display:none;">Developed by Farid Hashim</p>
+            </div><!-- /form -->
+        </div><!-- /card-container -->
+    </div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/index.js"></script>
+<script src="http://api.zackseen.com/js/general.js"></script>
+<script src="js/login.js"></script>
+</body>
 </html>
