@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.phonegappro.wordpress" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>WordPress</name>
+    <name>Volunteer System</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="zackseen@gmail.com" href="zackseen@gmail.com">
+        Mohammad Farid Bin Hashim
     </author>
     <content src="index.html" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
