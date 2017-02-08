@@ -23,7 +23,8 @@ function logOut() {
 }
 
 function getFeatureIMG(id,pid) {
-
+  console.log(id);
+  console.log(pid);
 	var postid = pid;
 	var featureid = id;
 	$.ajax({
@@ -46,7 +47,8 @@ function getFeatureIMG(id,pid) {
 
         	console.log(posts_array);
         	var html = "";  
-            var img = posts_array.media_details.sizes.medium_large.source_url;
+            //var img = posts_array.media_details.sizes.medium.source_url;
+            var img = posts_array.guid.rendered;
             console.log(img);
             var alt = posts_array.alt_text;
             saveInClient('theimg',img);
