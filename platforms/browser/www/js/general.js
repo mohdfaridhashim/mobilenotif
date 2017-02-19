@@ -152,7 +152,9 @@ function gotoCatPage(type) {
             html = html + "</div>";
             if(localStorage.categoryID == vol) {
               html = html + "<button type=\"button\" class=\"btn btn-primary btn-block\" onclick=\"postComment();\">I Volunteer</button>";
-            }else {
+            }else if(localStorage.categoryID == theevent) {
+              html = html + "<button type=\"button\" class=\"btn btn-primary btn-block\" onclick=\"postComment();\">I Participate</button>";
+            } else {
               html = html + "<button type=\"button\" class=\"btn btn-primary btn-block\" onclick=\"postComment();\">I Join</button>";
             }
             html = html + "<hr>";
@@ -325,6 +327,9 @@ function gotoCatPage(type) {
               //data - response from server
               alert("Thank.", null, "Hola!", "Success");
               if(localStorage.categoryID == vol) {
+                  genModal(localStorage.postdetailID);
+              }
+              if(localStorage.categoryID == theevent) {
                   genModal(localStorage.postdetailID);
               }
           }
