@@ -1,31 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Volunteer System</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link href="css/css.css" rel="stylesheet" type="text/css">
-  <link href="css/css2.css" rel="stylesheet" type="text/css">
-  <link href="css/login.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-    <div class="container">
-        <div class="card card-container">
-            <img id="profile-img" class="profile-img-card" src="img/avatar_2x.png" />
-            <p id="profile-name" class="profile-name-card"></p>
-            <div class="form-signin">
-                <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
-                <input type="password" id="password" class="form-control" placeholder="Password" required>
-                <button class="btn btn-lg btn-primary btn-block btn-signin" onclick="login();">Sign in</button>
-                <p style="display:none;">Developed by Farid Hashim</p>
-            </div><!-- /form -->
-        </div><!-- /card-container -->
-    </div>
+<title>Bootstrap Example</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+.form-signin
+{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-signin .form-signin-heading, .form-signin .checkbox
+{
+    margin-bottom: 10px;
+}
+.form-signin .checkbox
+{
+    font-weight: normal;
+}
+.form-signin .form-control
+{
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.form-signin .form-control:focus
+{
+    z-index: 2;
+}
+.form-signin input[type="text"]
+{
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"]
+{
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.account-wall
+{
+    margin-top: 20px;
+    padding: 40px 0px 20px 0px;
+    background-color: #f7f7f7;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+.login-title
+{
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+    display: block;
+}
+.profile-img
+{
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+.need-help
+{
+    margin-top: 10px;
+}
+.new-account
+{
+    display: block;
+    margin-top: 10px;
+}
+.friend-list {
+  list-style: none;
+  margin-left: -40px;
+}
+
+.friend-list li {
+  border-bottom: 1px solid #eee;
+}
+
+.friend-list li a img {
+  float: left;
+  width: 45px;
+  height: 45px;
+  margin-right: 0px;
+}
+
+ .friend-list li a {
+  position: relative;
+  display: block;
+  padding: 10px;
+  transition: all .2s ease;
+  -webkit-transition: all .2s ease;
+  -moz-transition: all .2s ease;
+  -ms-transition: all .2s ease;
+  -o-transition: all .2s ease;
+}
+
+.friend-list li.active a {
+  background-color: #f1f5fc;
+}
+
+.friend-list li a .friend-name, 
+.friend-list li a .friend-name:hover {
+  color: #777;
+}
+
+.friend-list li a .last-message {
+  width: 65%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.friend-list li a .time {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+}
+
+.friend-list li a .chat-alert {
+  position: absolute;
+  right: 8px;
+  top: 27px;
+  font-size: 10px;
+  padding: 3px 5px;
+}
+#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages li { padding: 5px 10px; }
+#messages li:nth-child(odd) { background: #eee; }
+#messages { margin-bottom: 40px }
+</style>
+<script src="js/socket.io-1.2.0.js"></script>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/index.js"></script>
-<script src="http://api.zackseen.com/js/general.js?v=2"></script>
-<script src="js/login.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse" id="navmenu" style="display: none;">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="#" id="listBTN">List Chat</a></li>
+      <li><a href="#" id="logoutBTN">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="row" id="loginform">
+<div class="container" >
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-md-offset-4">
+            <h1 class="text-center login-title">Sign in</h1>
+            <div class="account-wall">
+                <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                    alt="">
+                <form class="form-signin">
+                <input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
+                <input type="password" id="password" class="form-control" placeholder="Password" required>
+                <button id="login" class="btn btn-lg btn-primary btn-block" type="button">
+                    Sign in</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="row" id="listchat" style="display:none;">
+<div class="container">
+<ul class="friend-list" id="friend-list">
+    <li class="active bounceInDown">
+        <a href="#" class="clearfix">
+            <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+            <div class="friend-name">   
+                <strong>John Doe</strong>
+            </div>
+            <div class="last-message text-muted">Hello, Are you there?</div>
+            <small class="time text-muted">Just now</small>
+            <small class="chat-alert label label-danger">1</small>
+        </a>
+    </li>
+    <li>
+        <a href="#" class="clearfix">
+            <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
+            <div class="friend-name">   
+                <strong>Jane Doe</strong>
+            </div>
+            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
+            <small class="time text-muted">5 mins ago</small>
+        <small class="chat-alert text-muted"><i class="fa fa-check"></i></small>
+        </a>
+    </li>                  
+</ul>
+</div>
+</div>
+<div class="row" id="chat" style="display:none">
+<div class="container">
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" />
+      <input type="hidden" name="sender" id="sender">
+      <input type="hidden" name="receiver" id="receiver">
+      <input type="hidden" name="conversation" id="conversation">
+      <button id="sendText" class="btn btn-lg btn-primary btn-block" type="button">Send</button>
+      <button id="refresh" class="btn btn-lg btn-primary btn-none" style="display:none" type="button">refresh</button>
+    </form>
+</div>
+</div>
 </body>
+<script>
+$(document).ready(function() {
+    //if user already login it will redirect to 
+    var socket = io('http://localhost:3000');
+    if(localStorage.getItem("auth")!=null){
+        $("#loginform").css("display", "none");
+        $("#listchat").css("display", "block");
+        $("#navmenu").css("display", "block");
+        socket.emit('login', localStorage.getItem("auth_req"));
+    }else{
+        $("#loginform").css("display", "block");
+        $("#listchat").css("display", "none");
+        $("#navmenu").css("display", "none");
+        removeStorage();
+    }
+    if(localStorage.getItem("conversation_List")!=null){
+        $('#friend-list').html(localStorage.getItem("conversation_List"));
+    }
+    $('#login').click(function() {
+        var req = JSON.stringify({ email: $("#username").val(), pwd: $("#password").val() });
+        localStorage.setItem('auth_req',req);
+        socket.emit('login', req);
+    });
+    $('#listBTN').on('click', function(event) {
+      event.preventDefault(); 
+      $("#loginform").css("display", "none");
+      $("#listchat").css("display", "block");
+      $("#navmenu").css("display", "block");
+      $("#chat").css("display", "none");
+      socket.emit('conversation_List',localStorage.getItem("auth"));
+    });
+    $('#refresh').on('click', function(event) {
+      socket.emit('chatPage', localStorage.getItem("cid"));
+    });
+    $('#logoutBTN').on('click', function(event) {
+      event.preventDefault(); 
+      $("#loginform").css("display", "block");
+      $("#listchat").css("display", "none");
+      $("#navmenu").css("display", "none");
+      $("#chat").css("display", "none");
+      removeStorage();
+    });
+    //send message
+    $('#sendText').on('click', function(event) {
+      event.preventDefault();
+      var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: $('#m').val() });
+      socket.emit('chatting', message);
+      $('#m').val('');
+    });
+    //socket event
+    socket.on('login', function(msg){
+      console.log(msg);
+      if(msg != 'invalid authentication'){
+        var detail = JSON.parse(msg);
+        if(detail.statusCODE=='1'){
+          localStorage.setItem("auth", msg);
+          $("#loginform").css("display", "none");
+          $("#listchat").css("display", "block");
+          $("#navmenu").css("display", "block");
+          socket.emit('conversation_List',msg);
+        }else{
+            alert('invalid authentication');
+        }
+      }
+    });
+    socket.on('conversation_List', function(msg){
+      localStorage.setItem('conversation_List',msg);
+      $('#friend-list').html(msg);
+    });
+    socket.on('chatting', function(msg){
+      $('#messages').append($('<li>').text(msg));
+      window.scrollTo(0, document.body.scrollHeight);
+      socket.emit('conversation_List',localStorage.getItem("auth"));
+    });
+    socket.on('chatPage', function(msg){
+      $('#messages').html(msg);
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    function removeStorage(){
+      localStorage.removeItem("auth");
+      localStorage.removeItem("auth_req");
+      localStorage.removeItem("auth");
+    }
+});
+function chatPage(uid,ruid,cid){
+  $("#loginform").css("display", "none");
+  $("#listchat").css("display", "none");
+  $("#navmenu").css("display", "block");
+  $("#chat").css("display", "block");
+  $("#sender").val(uid);
+  $("#receiver").val(ruid);
+  $("#conversation").val(cid);
+  localStorage.setItem('cid',cid);
+  $("#refresh").click();
+}
+</script>
 </html>
