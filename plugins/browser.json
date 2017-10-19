@@ -9,6 +9,9 @@
     "installed_plugins": {
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.phonegappro.wordpress"
+        },
+        "cordova-plugin-privacyscreen": {
+            "PACKAGE_NAME": "com.phonegappro.wordpress"
         }
     },
     "dependent_plugins": {}
