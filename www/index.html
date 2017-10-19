@@ -4,7 +4,11 @@
 <title>Bootstrap Example</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
 <style>
 .form-signin
 {
@@ -143,8 +147,9 @@
 #messages { margin-bottom: 40px }
 </style>
 <script src="js/socket.io-1.2.0.js"></script>
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-inverse" id="navmenu" style="display: none;">
@@ -152,7 +157,7 @@
     <div class="navbar-header">
       <a class="navbar-brand" href="#">WebSiteName</a>
     </div>
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav pull-right">
       <li><a href="#" id="listBTN">List Chat</a></li>
       <li><a href="#" id="logoutBTN">Logout</a></li>
     </ul>
@@ -160,23 +165,23 @@
 </nav>
 
 <div class="row" id="loginform">
-<div class="container" >
-    <div class="row">
-        <div class="col-sm-12 col-md-12 col-md-offset-4">
-            <h1 class="text-center login-title">Sign in</h1>
-            <div class="account-wall">
-                <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
-                    alt="">
-                <form class="form-signin">
-                <input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
-                <input type="password" id="password" class="form-control" placeholder="Password" required>
-                <button id="login" class="btn btn-lg btn-primary btn-block" type="button">
-                    Sign in</button>
-                </form>
+    <div class="container" >
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-md-offset-4">
+                <h1 class="text-center login-title">Sign in</h1>
+                <div class="account-wall">
+                    <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                        alt="">
+                    <form class="form-signin">
+                    <input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
+                    <input type="password" id="password" class="form-control" placeholder="Password" required>
+                    <button id="login" class="btn btn-lg btn-primary btn-block" type="button">
+                        Sign in</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 <div class="row" id="listchat" style="display:none;">
 <div class="container">
