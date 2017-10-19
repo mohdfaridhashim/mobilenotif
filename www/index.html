@@ -10,6 +10,11 @@
 <!-- Ionicons -->
 <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
 <style>
+.row
+{
+  margin-left: 0px;
+  margin-right: 0px;
+}
 .form-signin
 {
     max-width: 330px;
@@ -166,7 +171,7 @@
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-inverse" id="navmenu" style="display: none;">
+<nav class="navbar navbar-inverse col-xs-12 col-lg-12" id="navmenu" style="display: none;">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">WebSiteName</a>
@@ -198,51 +203,63 @@
     </div>
 </div>
 <div class="row" id="listchat" style="display:none;">
-<div class="container">
-<ul class="friend-list" id="friend-list">
-    <li class="active bounceInDown">
-        <a href="#" class="clearfix">
-            <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
-            <div class="friend-name">   
-                <strong>John Doe</strong>
-            </div>
-            <div class="last-message text-muted">Hello, Are you there?</div>
-            <small class="time text-muted">Just now</small>
-            <small class="chat-alert label label-danger">1</small>
-        </a>
-    </li>
-    <li>
-        <a href="#" class="clearfix">
-            <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
-            <div class="friend-name">   
-                <strong>Jane Doe</strong>
-            </div>
-            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-            <small class="time text-muted">5 mins ago</small>
-        <small class="chat-alert text-muted"><i class="fa fa-check"></i></small>
-        </a>
-    </li>                  
-</ul>
-</div>
+  <div class="container">
+      <ul class="friend-list" id="friend-list">
+          <li class="active bounceInDown">
+              <a href="#" class="clearfix">
+                  <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+                  <div class="friend-name">   
+                      <strong>John Doe</strong>
+                  </div>
+                  <div class="last-message text-muted">Hello, Are you there?</div>
+                  <small class="time text-muted">Just now</small>
+                  <small class="chat-alert label label-danger">1</small>
+              </a>
+          </li>
+          <li>
+              <a href="#" class="clearfix">
+                  <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
+                  <div class="friend-name">   
+                      <strong>Jane Doe</strong>
+                  </div>
+                  <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
+                  <small class="time text-muted">5 mins ago</small>
+              <small class="chat-alert text-muted"><i class="fa fa-check"></i></small>
+              </a>
+          </li>                  
+      </ul>
+  </div>
 </div>
 <div class="row" id="chat" style="display:none">
-<div class="container">
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" />
-      <input type="hidden" name="sender" id="sender">
-      <input type="hidden" name="receiver" id="receiver">
-      <input type="hidden" name="conversation" id="conversation">
-      <button id="sendText" class="btn btn-lg btn-primary btn-block" type="button">Send</button>
-      <button id="refresh" class="btn btn-lg btn-primary btn-none" style="display:none" type="button">refresh</button>
-    </form>
+    <div class="container">
+      <div class="panel panel-default">
+          <div class="panel-heading top-bar">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat Page</h3>
+          </div>
+          <div class="panel-body msg_container_base">
+              <ul id="messages"></ul>
+          </div>
+      </div>
+      <footer class="footer">
+          <div class="input-group">
+              <input type="hidden" name="sender" id="sender">
+              <input type="hidden" name="receiver" id="receiver">
+              <input type="hidden" name="conversation" id="conversation">
+              <input id="m" type="text" autocomplete="off" class="form-control input-sm chat_input" placeholder="Write your message here">
+              <span class="input-group-btn">
+              <button id="sendText" class="btn btn-primary btn-sm">Send</button>
+              <button id="refresh" class="btn btn-lg btn-primary btn-none" style="display:none" type="button">refresh</button>
+              </span>
+          </div>
+      </footer>
+    </div>
 </div>
-</div>
+
 </body>
 <script>
 $(document).ready(function() {
     //if user already login it will redirect to 
-    var socket = io('http://localhost:3000');
+    var socket = io('https://middleman-chat.herokuapp.com/');
     if(localStorage.getItem("auth")!=null){
         $("#loginform").css("display", "none");
         $("#listchat").css("display", "block");
@@ -262,7 +279,7 @@ $(document).ready(function() {
         localStorage.setItem('auth_req',req);
         socket.emit('login', req);
     });
-    $('#listBTN').on('click', function(event) {
+    $('#listBTN').on('click', function(event){
       event.preventDefault(); 
       $("#loginform").css("display", "none");
       $("#listchat").css("display", "block");
@@ -309,7 +326,12 @@ $(document).ready(function() {
       $('#friend-list').html(msg);
     });
     socket.on('chatting', function(msg){
-      $('#messages').append($('<li>').text(msg));
+      var extrt = JSON.parse(msg);
+      if(extrt.type=='receive'){
+        $('#messages').append('<li class="pull-right">'+extrt.msg+' <small>'+extrt.to+'</small></li>');
+      }else{
+        $('#messages').append('<li>'+extrt.msg+' <small>'+extrt.to+'</small></li>');
+      }
       window.scrollTo(0, document.body.scrollHeight);
       socket.emit('conversation_List',localStorage.getItem("auth"));
     });
@@ -331,6 +353,7 @@ function chatPage(uid,ruid,cid){
   $("#chat").css("display", "block");
   $("#sender").val(uid);
   $("#receiver").val(ruid);
+  $("#who").val(ruid);
   $("#conversation").val(cid);
   localStorage.setItem('cid',cid);
   $("#refresh").click();
