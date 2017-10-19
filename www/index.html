@@ -10,22 +10,6 @@
 <!-- Ionicons -->
 <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
 <style>
-#listchat
-{
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
-user-select: none;
-}
-#listchat
-{
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
-user-select: none;
-}
 .form-signin
 {
     max-width: 330px;
@@ -104,6 +88,11 @@ user-select: none;
 .friend-list {
   list-style: none;
   margin-left: -40px;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .friend-list li {
@@ -157,18 +146,19 @@ user-select: none;
   font-size: 10px;
   padding: 3px 5px;
 }
-#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages 
+{ 
+  list-style-type: none; 
+  margin: 0; padding: 0;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; 
+}
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
 #messages { margin-bottom: 40px }
-#messages
-{
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
-user-select: none;
-}
 </style>
 <script src="js/socket.io-1.2.0.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
