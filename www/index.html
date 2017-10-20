@@ -327,10 +327,11 @@ $(document).ready(function() {
     });
     socket.on('chatting', function(msg){
       var extrt = JSON.parse(msg);
-      if(extrt.type=='receive'){
-        $('#messages').append('<li class="pull-right">'+extrt.msg+' <small>'+extrt.to+'</small></li>');
+      console.log(extrt);
+      if(extrt.type=="receive"){
+        $('#messages').append('<li class="col-xs-12 col-lg-12"><span class="pull-right">'+extrt.msg+' <small>'+extrt.to+'</small></span></li>');
       }else{
-        $('#messages').append('<li>'+extrt.msg+' <small>'+extrt.to+'</small></li>');
+        $('#messages').append('<li class"col-xs-12 col-lg-12" ><span class"pull-left">'+extrt.msg+' <small>'+extrt.to+'</small></span></li>');
       }
       window.scrollTo(0, document.body.scrollHeight);
       socket.emit('conversation_List',localStorage.getItem("auth"));
