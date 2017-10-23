@@ -10,6 +10,51 @@
 <!-- Ionicons -->
 <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
 <style>
+body 
+{
+	background:linear-gradient(45deg, #001b33, #5abafb, #0085de);
+	height:-webkit-fill-available;
+}
+.form-control, .form-control:focus
+{
+	background-color: transparent !important;
+    border: none !important;
+	border-bottom: 0.1px solid white !important;
+    border-radius: unset !important;
+	-webkit-box-shadow: none !important;
+	-moz-box-shadow: none !important;
+	box-shadow: none !important;
+	padding-top: 25px !important;
+	margin-left: 5px;
+}
+input::placeholder
+{
+  color: white !important;
+}
+.input-group-addon, .input-group-addon:focus
+{
+	background-color: transparent !important;
+	border: none !important;
+	border-radius: unset !important;
+}
+.fa {
+  color: white;
+    position: absolute;
+    margin-left: -20px;
+}
+.fa-sign-in {
+    position: inherit;
+    margin-left: 0px;
+	padding-right: 10px;
+}
+.btn-primary
+{
+	margin-top: 25px !important;
+    border-radius: 100px !important;
+    color: #fff !important;
+    background-color: #004988 !important;
+    border-color: #2682d4 !important;
+}
 .row
 {
   margin-left: 0px;
@@ -58,28 +103,29 @@
 .account-wall
 {
     margin-top: 20px;
-    padding: 40px 0px 20px 0px;
-    background-color: #f7f7f7;
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    padding: 110px 0px 20px 0px;
 }
 .login-title
 {
-    color: #555;
+    color: white;
     font-size: 18px;
     font-weight: 400;
     display: block;
 }
 .profile-img
 {
-    width: 96px;
-    height: 96px;
+    width: 140px;
+    height: 120px;
+	background: white;
     margin: 0 auto 10px;
     display: block;
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
     border-radius: 50%;
+	background-image: url(img/polis.png);
+    background-size: 100px 100px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .need-help
 {
@@ -191,13 +237,18 @@
             <div class="col-sm-12 col-md-12">
                 <h1 class="text-center login-title">Sign in</h1>
                 <div class="account-wall">
-                    <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
-                        alt="">
+                    <img class="profile-img">
                     <form class="form-signin">
-                    <input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
-                    <input type="password" id="password" class="form-control" placeholder="Password" required>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-user-o"></i></span>
+						<input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-key"></i></span>
+						<input type="password" id="password" class="form-control" placeholder="Password" required>
+					</div>
                     <button id="login" class="btn btn-lg btn-primary btn-block" type="button">
-                        Sign in</button>
+                        <i class="fa fa-sign-in"></i> Sign in</button>
                     </form>
                 </div>
             </div>
