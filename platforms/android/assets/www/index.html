@@ -4,8 +4,17 @@
 <title>Bootstrap Example</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
 <style>
+.row
+{
+  margin-left: 0px;
+  margin-right: 0px;
+}
 .form-signin
 {
     max-width: 330px;
@@ -84,6 +93,11 @@
 .friend-list {
   list-style: none;
   margin-left: -40px;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .friend-list li {
@@ -137,93 +151,119 @@
   font-size: 10px;
   padding: 3px 5px;
 }
-#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages 
+{ 
+  list-style-type: none; 
+  margin: 0; padding: 0;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; 
+}
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
 #messages { margin-bottom: 40px }
 </style>
 <script src="js/socket.io-1.2.0.js"></script>
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-inverse" id="navmenu" style="display: none;">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">WebSiteName</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li><a href="#" id="listBTN">List Chat</a></li>
-      <li><a href="#" id="logoutBTN">Logout</a></li>
-    </ul>
-  </div>
-</nav>
 
+<div class="row col-xs-12 col-lg-12" id="navmenu" style="display: none;background-color: black; padding-bottom: 10px;">
+<nav class="navbar navbar-inverse" style="background-color: black;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">WebSiteName</a>
+        </div>
+      </div>
+  </nav>
+  <div>
+  <a href="#" id="listBTN" class="btn btn-info col-lg-6 col-xs-6" role="button">List Chat</a>
+  <a href="#" id="logoutBTN" class="btn btn-warning col-lg-6 col-xs-6" role="button">Logout</a>
+  </div>
+</div>
 <div class="row" id="loginform">
-<div class="container" >
-    <div class="row">
-        <div class="col-sm-12 col-md-12 col-md-offset-4">
-            <h1 class="text-center login-title">Sign in</h1>
-            <div class="account-wall">
-                <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
-                    alt="">
-                <form class="form-signin">
-                <input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
-                <input type="password" id="password" class="form-control" placeholder="Password" required>
-                <button id="login" class="btn btn-lg btn-primary btn-block" type="button">
-                    Sign in</button>
-                </form>
+    <div class="container" >
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <h1 class="text-center login-title">Sign in</h1>
+                <div class="account-wall">
+                    <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                        alt="">
+                    <form class="form-signin">
+                    <input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
+                    <input type="password" id="password" class="form-control" placeholder="Password" required>
+                    <button id="login" class="btn btn-lg btn-primary btn-block" type="button">
+                        Sign in</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
-</div>
 <div class="row" id="listchat" style="display:none;">
-<div class="container">
-<ul class="friend-list" id="friend-list">
-    <li class="active bounceInDown">
-        <a href="#" class="clearfix">
-            <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
-            <div class="friend-name">   
-                <strong>John Doe</strong>
-            </div>
-            <div class="last-message text-muted">Hello, Are you there?</div>
-            <small class="time text-muted">Just now</small>
-            <small class="chat-alert label label-danger">1</small>
-        </a>
-    </li>
-    <li>
-        <a href="#" class="clearfix">
-            <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
-            <div class="friend-name">   
-                <strong>Jane Doe</strong>
-            </div>
-            <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
-            <small class="time text-muted">5 mins ago</small>
-        <small class="chat-alert text-muted"><i class="fa fa-check"></i></small>
-        </a>
-    </li>                  
-</ul>
-</div>
+  <div class="row"></div>
+  <div class="row">
+      <ul class="friend-list" id="friend-list" ">
+          <li class="active bounceInDown" >
+              <a href="#" class="clearfix">
+                  <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+                  <div class="friend-name">   
+                      <strong>John Doe</strong>
+                  </div>
+                  <div class="last-message text-muted">Hello, Are you there?</div>
+                  <small class="time text-muted">Just now</small>
+                  <small class="chat-alert label label-danger">1</small>
+              </a>
+          </li>
+          <li>
+              <a href="#" class="clearfix">
+                  <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
+                  <div class="friend-name">   
+                      <strong>Jane Doe</strong>
+                  </div>
+                  <div class="last-message text-muted">Lorem ipsum dolor sit amet.</div>
+                  <small class="time text-muted">5 mins ago</small>
+              <small class="chat-alert text-muted"><i class="fa fa-check"></i></small>
+              </a>
+          </li>                  
+      </ul>
+  </div>
 </div>
 <div class="row" id="chat" style="display:none">
-<div class="container">
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" />
-      <input type="hidden" name="sender" id="sender">
-      <input type="hidden" name="receiver" id="receiver">
-      <input type="hidden" name="conversation" id="conversation">
-      <button id="sendText" class="btn btn-lg btn-primary btn-block" type="button">Send</button>
-      <button id="refresh" class="btn btn-lg btn-primary btn-none" style="display:none" type="button">refresh</button>
-    </form>
+    <div class="row"></div>
+    <div class="row">
+      <div class="panel panel-default">
+          <div class="panel-heading top-bar">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat Page</h3>
+          </div>
+          <div class="panel-body msg_container_base">
+              <ul id="messages"></ul>
+          </div>
+      </div>
+      <footer class="footer">
+          <div class="input-group">
+              <input type="hidden" name="sender" id="sender">
+              <input type="hidden" name="receiver" id="receiver">
+              <input type="hidden" name="conversation" id="conversation">
+              <input id="m" type="text" autocomplete="off" class="form-control input-sm chat_input" placeholder="Write your message here">
+              <span class="input-group-btn">
+              <button id="sendText" class="btn btn-primary btn-sm">Send</button>
+              <button id="refresh" class="btn btn-lg btn-primary btn-none" style="display:none" type="button">refresh</button>
+              </span>
+          </div>
+      </footer>
+    </div>
 </div>
-</div>
+
 </body>
 <script>
 $(document).ready(function() {
     //if user already login it will redirect to 
-    var socket = io('http://localhost:3000');
+    var socket = io('https://middleman-chat.herokuapp.com/');
     if(localStorage.getItem("auth")!=null){
         $("#loginform").css("display", "none");
         $("#listchat").css("display", "block");
@@ -243,7 +283,7 @@ $(document).ready(function() {
         localStorage.setItem('auth_req',req);
         socket.emit('login', req);
     });
-    $('#listBTN').on('click', function(event) {
+    $('#listBTN').on('click', function(event){
       event.preventDefault(); 
       $("#loginform").css("display", "none");
       $("#listchat").css("display", "block");
@@ -290,7 +330,13 @@ $(document).ready(function() {
       $('#friend-list').html(msg);
     });
     socket.on('chatting', function(msg){
-      $('#messages').append($('<li>').text(msg));
+      var extrt = JSON.parse(msg);
+      console.log(extrt);
+      if(extrt.type=="receive"){
+        $('#messages').append('<li class="col-xs-12 col-lg-12"><span class="pull-right">'+extrt.msg+' <small>'+extrt.to+'</small></span></li>');
+      }else{
+        $('#messages').append('<li class"col-xs-12 col-lg-12" ><span class"pull-left">'+extrt.msg+' <small>'+extrt.to+'</small></span></li>');
+      }
       window.scrollTo(0, document.body.scrollHeight);
       socket.emit('conversation_List',localStorage.getItem("auth"));
     });
@@ -312,6 +358,7 @@ function chatPage(uid,ruid,cid){
   $("#chat").css("display", "block");
   $("#sender").val(uid);
   $("#receiver").val(ruid);
+  $("#who").val(ruid);
   $("#conversation").val(cid);
   localStorage.setItem('cid',cid);
   $("#refresh").click();

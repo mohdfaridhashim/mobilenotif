@@ -4,14 +4,21 @@
   "displayName": "chat-client",
   "cordova": {
     "platforms": [
-      "android"
+      "android",
+      "browser"
     ],
     "plugins": {
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-file-transfer": {}
     }
   },
   "dependencies": {
-    "cordova-android": "~6.2.3",
+    "cordova-android": "^6.3.0",
+    "cordova-browser": "^5.0.1",
+    "cordova-plugin-camera": "^2.4.1",
+    "cordova-plugin-compat": "^1.2.0",
+    "cordova-plugin-file": "^4.3.3",
+    "cordova-plugin-file-transfer": "^1.6.3",
     "cordova-plugin-whitelist": "1",
     "web": "0.0.2"
   }
