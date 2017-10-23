@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <title>Bootstrap Example</title>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 <!-- Font Awesome -->
@@ -165,6 +166,7 @@
 #messages li:nth-child(odd) { background: #eee; }
 #messages { margin-bottom: 40px }
 </style>
+<script src="js/cordova.js"></script>
 <script src="js/socket.io-1.2.0.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -208,7 +210,7 @@
   <div class="row"></div>
   <div class="row">
       <ul class="friend-list" id="friend-list" ">
-          <li class="active bounceInDown" >
+          <li class="active bounceInDown"  style="display:none;">
               <a href="#" class="clearfix">
                   <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
                   <div class="friend-name">   
@@ -220,7 +222,7 @@
               </a>
           </li>
           <li>
-              <a href="#" class="clearfix">
+              <a href="#" class="clearfix" style="display:none;">
                   <img src="https://bootdey.com/img/Content/user_2.jpg" alt="" class="img-circle">
                   <div class="friend-name">   
                       <strong>Jane Doe</strong>
@@ -253,6 +255,8 @@
               <span class="input-group-btn">
               <button id="sendText" class="btn btn-primary btn-sm">Send</button>
               <button id="refresh" class="btn btn-lg btn-primary btn-none" style="display:none" type="button">refresh</button>
+              <button id="but_take" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-camera"></i></button>
+              <button id="but_select" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-picture"></i></button>
               </span>
           </div>
       </footer>
@@ -261,9 +265,12 @@
 
 </body>
 <script>
+var socket;
 $(document).ready(function() {
+    $("#but_take").on("click", cameraTakePicture);
+    $("#but_select").on("click", uploadFile); 
     //if user already login it will redirect to 
-    var socket = io('https://middleman-chat.herokuapp.com/');
+    socket = io('https://middleman-chat.herokuapp.com/');
     if(localStorage.getItem("auth")!=null){
         $("#loginform").css("display", "none");
         $("#listchat").css("display", "block");
@@ -278,37 +285,6 @@ $(document).ready(function() {
     if(localStorage.getItem("conversation_List")!=null){
         $('#friend-list').html(localStorage.getItem("conversation_List"));
     }
-    $('#login').click(function() {
-        var req = JSON.stringify({ email: $("#username").val(), pwd: $("#password").val() });
-        localStorage.setItem('auth_req',req);
-        socket.emit('login', req);
-    });
-    $('#listBTN').on('click', function(event){
-      event.preventDefault(); 
-      $("#loginform").css("display", "none");
-      $("#listchat").css("display", "block");
-      $("#navmenu").css("display", "block");
-      $("#chat").css("display", "none");
-      socket.emit('conversation_List',localStorage.getItem("auth"));
-    });
-    $('#refresh').on('click', function(event) {
-      socket.emit('chatPage', localStorage.getItem("cid"));
-    });
-    $('#logoutBTN').on('click', function(event) {
-      event.preventDefault(); 
-      $("#loginform").css("display", "block");
-      $("#listchat").css("display", "none");
-      $("#navmenu").css("display", "none");
-      $("#chat").css("display", "none");
-      removeStorage();
-    });
-    //send message
-    $('#sendText').on('click', function(event) {
-      event.preventDefault();
-      var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: $('#m').val() });
-      socket.emit('chatting', message);
-      $('#m').val('');
-    });
     //socket event
     socket.on('login', function(msg){
       console.log(msg);
@@ -344,14 +320,9 @@ $(document).ready(function() {
       $('#messages').html(msg);
       window.scrollTo(0, document.body.scrollHeight);
     });
-
-    function removeStorage(){
-      localStorage.removeItem("auth");
-      localStorage.removeItem("auth_req");
-      localStorage.removeItem("auth");
-    }
 });
 function chatPage(uid,ruid,cid){
+  $('#messages').html();
   $("#loginform").css("display", "none");
   $("#listchat").css("display", "none");
   $("#navmenu").css("display", "block");
@@ -363,5 +334,87 @@ function chatPage(uid,ruid,cid){
   localStorage.setItem('cid',cid);
   $("#refresh").click();
 }
+
+function cameraTakePicture() { 
+   navigator.camera.getPicture(onSuccess, onFail, {  
+      quality: 20, 
+      destinationType: Camera.DestinationType.DATA_URL 
+   });  
+   
+   function onSuccess(imageData) { 
+      var image = document.getElementById('myImage'); 
+      image.src = "data:image/jpeg;base64," + imageData; 
+   }  
+   
+   function onFail(message) { 
+      alert('Failed because: ' + message); 
+   } 
+}
+
+function uploadFile() {
+   var fileURL = "///storage/emulated/0/DCIM"
+   var uri = encodeURI("http://rest.digitaloneserver.com/api.php?rquest=upload");
+   var options = new FileUploadOptions();
+   options.fileKey = "file";
+   options.fileName = fileURL.substr(fileURL.lastIndexOf('/')+1);
+   options.mimeType = "text/plain";
+   
+   var headers = {'headerParam':'headerValue'};
+   options.headers = headers;
+   var ft = new FileTransfer();
+   ft.upload(fileURL, uri, onSuccess, onError, options);
+
+   function onSuccess(r) {
+      console.log("Code = " + r.responseCode);
+      console.log("Response = " + r.response);
+      console.log("Sent = " + r.bytesSent);
+   }
+
+   function onError(error) {
+      alert("An error has occurred: Code = " + error.code);
+      console.log("upload error source " + error.source);
+      console.log("upload error target " + error.target);
+   }
+  
+}
+function removeStorage(){
+    localStorage.removeItem("auth");
+    localStorage.removeItem("auth_req");
+    localStorage.removeItem("auth");
+    localStorage.removeItem("cid");
+    localStorage.removeItem("conversation_List");
+}
+$('#login').click(function() {
+    var req = JSON.stringify({ email: $("#username").val(), pwd: $("#password").val() });
+    localStorage.setItem('auth_req',req);
+    socket.emit('login', req);
+});
+$('#listBTN').on('click', function(event){
+    //event.preventDefault(); 
+    $("#loginform").css("display", "none");
+    $("#listchat").css("display", "block");
+    $("#navmenu").css("display", "block");
+    $("#chat").css("display", "none");
+    socket.emit('conversation_List',localStorage.getItem("auth"));
+});
+$('#refresh').on('click', function(event) {
+    socket.emit('chatPage', localStorage.getItem("cid"));
+});
+$('#logoutBTN').on('click', function(event) {
+    //event.preventDefault(); 
+    $("#loginform").css("display", "block");
+    $("#listchat").css("display", "none");
+    $("#navmenu").css("display", "none");
+    $("#chat").css("display", "none");
+    removeStorage();
+});
+//send message
+$('#sendText').on('click', function(event) {
+    event.preventDefault();
+    var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: $('#m').val() });
+    socket.emit('chatting', message);
+    $('#m').val('');
+});
+
 </script>
 </html>
