@@ -11,6 +11,89 @@
 <!-- Ionicons -->
 <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
 <style>
+body
+{
+	height:-webkit-fill-available;
+}
+.theme
+{
+	background:linear-gradient(45deg, #04559c, #4dadef, #3ba8f3, #0370b9);
+}
+.loading-div
+{
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.5);
+    height: 100%;
+    width: 100%;
+    z-index: 99;
+}
+.loading-spinner
+{
+    top: 50%;
+    left: 48%;
+    color: #0159a5 !important;
+	position: absolute;
+}
+.form-control, .form-control:focus
+{
+	background-color: transparent !important;
+    border: none !important;
+	border-bottom: 0.1px solid white !important;
+    border-radius: unset !important;
+	-webkit-box-shadow: none !important;
+	-moz-box-shadow: none !important;
+	box-shadow: none !important;
+	padding-top: 25px !important;
+	margin-left: 5px;
+	color: white !important;
+}
+input::placeholder
+{
+  color: white !important;
+}
+.input-group-addon, .input-group-addon:focus
+{
+	background-color: transparent !important;
+	border: none !important;
+	border-radius: unset !important;
+}
+.fa-user-o, .fa-key {
+  color: white;
+    position: absolute;
+    margin-left: -20px;
+}
+.fa-sign-in {
+    position: inherit;
+    margin-left: 0px;
+	padding-right: 10px;
+}
+.btn-primary, .btn-primary:focus
+{
+	margin-top: 25px !important;
+    border-radius: 100px !important;
+    color: #fff !important;
+    background-color: #004988 !important;
+    border-color: #2682d4 !important;
+	outline: none !important;
+}
+.header-title
+{
+    color: white;
+    font-weight: bold;
+    font-size: 30px;
+}
+.header-menu-left, .header-menu-right
+{
+	border-radius: 0px;
+    width: 50%;
+	margin-top: -10px;
+    padding: 10px 0px;
+}
+.chat-list
+{
+	background-color: #ffffff;
+    height: calc(100vh - 117px);
+}
 .row
 {
   margin-left: 0px;
@@ -59,28 +142,30 @@
 .account-wall
 {
     margin-top: 20px;
-    padding: 40px 0px 20px 0px;
-    background-color: #f7f7f7;
-    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    padding: 110px 0px 20px 0px;
 }
 .login-title
 {
-    color: #555;
+    color: white;
     font-size: 18px;
     font-weight: 400;
     display: block;
 }
 .profile-img
 {
-    width: 96px;
-    height: 96px;
+    width: 140px;
+    height: 130px;
+	background: rgba(255, 255, 255, 0.52);
     margin: 0 auto 10px;
     display: block;
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
     border-radius: 50%;
+	background-image: url(img/polis.png);
+    background-size: 110px 110px;
+    background-repeat: no-repeat;
+    background-position: center;
+	margin-bottom: 70px;
 }
 .need-help
 {
@@ -152,6 +237,11 @@
   font-size: 10px;
   padding: 3px 5px;
 }
+.btn-warning {
+    color: #fff;
+    background-color: #b7b4bd;
+    border: none;
+}
 #messages 
 { 
   list-style-type: none; 
@@ -172,34 +262,44 @@
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
-<body>
-<div class="row">
-<div class="row col-xs-12 col-lg-12" id="navmenu" style="display: none;background-color: black; padding-bottom: 10px;">
-<nav class="navbar navbar-inverse" style="background-color: black;">
+<body id="body-id" class="theme">
+<div id="loading-div" class="row loading-div" style="display:none">
+	<i class="fa fa-spinner fa-pulse fa-3x fa-fw loading-spinner"></i>
+</div>
+<div class="row col-xs-12 col-lg-12" id="navmenu" style="display: none; padding-bottom: 10px;">
+<nav class="navbar">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">WebSiteName</a>
+          <h4 class="header-title">PDRM</h4>
         </div>
       </div>
   </nav>
   <div>
-  <a href="#" id="listBTN" class="btn btn-info col-lg-6 col-xs-6" role="button">List Chat</a>
-  <a href="#" id="logoutBTN" class="btn btn-warning col-lg-6 col-xs-6" role="button">Logout</a>
+  <a href="#" id="listBTN" class="btn btn-info col-lg-6 col-xs-6 header-menu-left" role="button">
+	<i class="fa fa-bars" aria-hidden="true">&nbsp List Chat</i>
+  </a>
+  <a href="#" id="logoutBTN" class="btn btn-warning col-lg-6 col-xs-6 header-menu-right" role="button">
+	<i class="fa fa-sign-out" aria-hidden="true">&nbsp Logout</i>
+  </a>
   </div>
 </div>
 <div class="row" id="loginform">
     <div class="container" >
         <div class="row">
             <div class="col-sm-12 col-md-12">
-                <h1 class="text-center login-title">Sign in</h1>
                 <div class="account-wall">
-                    <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
-                        alt="">
+                    <img class="profile-img">
                     <form class="form-signin">
-                    <input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
-                    <input type="password" id="password" class="form-control" placeholder="Password" required>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-user-o"></i></span>
+						<input type="text" id="username" class="form-control" placeholder="Email" required autofocus>
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-key"></i></span>
+						<input type="password" id="password" class="form-control" placeholder="Password" required>
+					</div>
                     <button id="login" class="btn btn-lg btn-primary btn-block" type="button">
-                        Sign in</button>
+                        <i class="fa fa-sign-in"></i> Sign in</button>
                     </form>
                 </div>
             </div>
@@ -208,7 +308,7 @@
 </div>
 <div class="row" id="listchat" style="display:none;">
   <div class="row"></div>
-  <div class="row">
+  <div class="row chat-list">
       <ul class="friend-list" id="friend-list" ">
           <li class="active bounceInDown"  style="display:none;">
               <a href="#" class="clearfix">
@@ -320,6 +420,7 @@ $(document).ready(function() {
             alert('invalid authentication');
         }
       }
+	  $("#loading-div").hide();
     });
     socket.on('conversation_List', function(msg){
       localStorage.setItem('conversation_List',msg);
