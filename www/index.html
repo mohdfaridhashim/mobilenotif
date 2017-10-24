@@ -394,13 +394,13 @@ $('#sendText').on('click', function(event) {
 
 function cameraTakePicture() { 
    navigator.camera.getPicture(onSuccess, onFail, {  
-      quality: 50, 
+      quality: 100, 
       destinationType: Camera.DestinationType.FILE_URI,
       sourceType:  Camera.PictureSourceType.CAMERA,
       encodingType: Camera.EncodingType.JPEG,
       mediaType: Camera.MediaType.PICTURE,
-      targetWidth: 300,
-      targetHeight:200,
+      targetWidth: 800,
+      targetHeight:600,
       allowEdit: false,
       correctOrientation: true,  //Corrects Android orientation quirks
       saveToPhotoAlbum: true 
