@@ -256,7 +256,6 @@
               <button id="sendText" class="btn btn-primary btn-sm">Send</button>
               <button id="refresh" class="btn btn-lg btn-primary btn-none" style="display:none" type="button">refresh</button>
               <button id="but_take" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-camera"></i></button>
-              <button id="but_select" class="btn btn-primary btn-sm"><i class="glyphicon glyphicon-picture"></i></button>
               </span>
           </div>
       </footer>
@@ -268,7 +267,6 @@
 var socket;
 $(document).ready(function() {
     $("#but_take").on("click", cameraTakePicture);
-    $("#but_select").on("click", uploadFile); 
     //if user already login it will redirect to 
     socket = io('https://middleman-chat.herokuapp.com/');
     if(localStorage.getItem("auth")!=null){
@@ -336,35 +334,6 @@ $(document).ready(function() {
             destinationType: Camera.DestinationType.FILE_URI
         });
     });
-
-    // Change image source and upload photo to server
-    function onSuccess(imageURI) {
-        // Set image source
-        var image = document.getElementById('img');
-        image.src = imageURI  + '?' + Math.random();
-
-        var options = new FileUploadOptions();
-        options.fileKey = "file";
-        options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-        options.mimeType = "image/jpeg";
-
-        var params = {};
-        params.value1 = "test";
-        params.value2 = "param";
-
-        options.params = params;
-        options.chunkedMode = false;
-
-        var ft = new FileTransfer();
-        ft.upload(imageURI, "http://rest.digitaloneserver.com/api.php?rquest=upload", function(result){
-            alert('successfully uploaded ' + result.response);
-        }, function(error){
-            alert('error : ' + JSON.stringify(error));
-        }, options);
-    }
-    function onFail(message) {
-        alert('Failed because: ' + message);
-    }
 });
 function chatPage(uid,ruid,cid){
   $('#messages').html();
@@ -420,5 +389,36 @@ $('#sendText').on('click', function(event) {
     $('#m').val('');
 });
 
+function cameraTakePicture() { 
+   navigator.camera.getPicture(onSuccess, onFail, {  
+      quality: 20, 
+      destinationType: Camera.DestinationType.DATA_URL 
+   });  
+   
+   function onSuccess(imageData) { 
+      var image = document.getElementById('img');
+      image.src = imageData  + '?' + Math.random();
+
+      var options = new FileUploadOptions();
+      options.fileKey = "file";
+      options.fileName = imageData.substr(imageData.lastIndexOf('/') + 1);
+      options.mimeType = "image/jpeg";
+
+      var params = {};
+      options.params = params;
+      options.chunkedMode = false;
+
+      var ft = new FileTransfer();
+      ft.upload(imageData, "http://rest.digitaloneserver.com/api.php?rquest=upload", function(result){
+          alert('successfully uploaded ' + result.response);
+      }, function(error){
+          alert('error : ' + JSON.stringify(error));
+      }, options);
+   }  
+   
+   function onFail(message) { 
+      alert('Failed because: ' + message); 
+   } 
+}
 </script>
 </html>
