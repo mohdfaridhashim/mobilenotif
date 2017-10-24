@@ -409,7 +409,7 @@ function cameraTakePicture() {
       options.chunkedMode = false;
 
       var ft = new FileTransfer();
-      ft.upload(imageData, "http://rest.digitaloneserver.com/api.php?rquest=upload", function(result){
+      ft.upload(imageData, "http://upload.digitaloneserver.com/", function(result){
           alert('successfully uploaded ' + result.response);
       }, function(error){
           alert('error : ' + JSON.stringify(error));
