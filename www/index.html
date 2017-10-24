@@ -166,14 +166,14 @@
 #messages li:nth-child(odd) { background: #eee; }
 #messages { margin-bottom: 40px }
 </style>
-<script src="cordova.js"></script>
+<!-- <script src="cordova.js"></script> -->
 <script src="js/socket.io-1.2.0.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
-
+<div class="row">
 <div class="row col-xs-12 col-lg-12" id="navmenu" style="display: none;background-color: black; padding-bottom: 10px;">
 <nav class="navbar navbar-inverse" style="background-color: black;">
       <div class="container-fluid">
@@ -262,8 +262,27 @@
     </div>
 </div>
 
-<div class="row" style="display:none">
-  <img id="img" src="https://bootdey.com/img/Content/user_1.jpg"/>
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Image</h4>
+      </div>
+      <div class="modal-body">
+        <img id="gambar" src="http://upload.digitaloneserver.com/upload/1508858085765.jpg" width="100%" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
 </div>
 </body>
 <script>
@@ -402,7 +421,6 @@ function cameraTakePicture() {
       targetWidth: 800,
       targetHeight:600,
       allowEdit: false,
-      correctOrientation: true,  //Corrects Android orientation quirks
       saveToPhotoAlbum: true 
    });  
    
@@ -424,7 +442,8 @@ function cameraTakePicture() {
       var ft = new FileTransfer();
       ft.upload(imageData, "http://upload.digitaloneserver.com/", function(result){
           var getResponse = jQuery.parseJSON(result.response);
-          var uploadmessage = '<img src=http://upload.digitaloneserver.com/upload/'+getResponse.file+' height="42" width="54" />';
+          var uploadUri = 'http://upload.digitaloneserver.com/upload/'+getResponse.file;
+          var uploadmessage = '<img src='+uploadUri+' height="42" width="54" />';
           var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: uploadmessage });
           socket.emit('chatting', message);
           alert('successfully sent.');
@@ -436,6 +455,11 @@ function cameraTakePicture() {
    function onFail(message) { 
       alert('Failed because: ' + message); 
    } 
+}
+
+function showGambar(gambarURI){
+  $("#gambar").attr("src",gambarURI);
+  $('#myModal').modal('toggle');
 }
 </script>
 </html>
