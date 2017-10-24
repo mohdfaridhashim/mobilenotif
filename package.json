@@ -10,7 +10,8 @@
     "plugins": {
       "cordova-plugin-whitelist": {},
       "cordova-plugin-file-transfer": {},
-      "cordova-plugin-camera": {}
+      "cordova-plugin-camera": {},
+      "cordova-plugin-file": {}
     }
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "cordova-plugin-compat": "^1.2.0",
     "cordova-plugin-file": "^4.3.3",
     "cordova-plugin-file-transfer": "^1.6.3",
+    "cordova-plugin-media-capture": "^1.4.3",
     "cordova-plugin-whitelist": "1",
     "web": "0.0.2"
   }

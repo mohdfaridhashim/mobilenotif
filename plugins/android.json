@@ -18,11 +18,10 @@
     },
     "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "com.phonegappro.wordpress"
-    }
-  },
-  "dependent_plugins": {
+    },
     "cordova-plugin-file": {
       "PACKAGE_NAME": "com.phonegappro.wordpress"
     }
-  }
+  },
+  "dependent_plugins": {}
 }

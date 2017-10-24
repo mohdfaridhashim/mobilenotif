@@ -3,7 +3,7 @@
 <head>
 <title>Bootstrap Example</title>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'" />
+<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; media-src *" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 <!-- Font Awesome -->
@@ -166,7 +166,7 @@
 #messages li:nth-child(odd) { background: #eee; }
 #messages { margin-bottom: 40px }
 </style>
-<script src="js/cordova.js"></script>
+<script src="cordova.js"></script>
 <script src="js/socket.io-1.2.0.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -263,7 +263,7 @@
 </div>
 
 <div class="row" style="display:none">
-  <img id="img" src="https://bootdey.com/img/Content/user_1.jpg">
+  <img id="img" src="https://bootdey.com/img/Content/user_1.jpg"/>
 </div>
 </body>
 <script>
@@ -394,14 +394,24 @@ $('#sendText').on('click', function(event) {
 
 function cameraTakePicture() { 
    navigator.camera.getPicture(onSuccess, onFail, {  
-      quality: 20, 
-      destinationType: Camera.DestinationType.DATA_URL 
+      quality: 50, 
+      destinationType: Camera.DestinationType.FILE_URI,
+      sourceType:  Camera.PictureSourceType.CAMERA,
+      encodingType: Camera.EncodingType.JPEG,
+      mediaType: Camera.MediaType.PICTURE,
+      targetWidth: 300,
+      targetHeight:200,
+      allowEdit: false,
+      correctOrientation: true,  //Corrects Android orientation quirks
+      saveToPhotoAlbum: true 
    });  
    
    function onSuccess(imageData) { 
-      var image = document.getElementById('img');
-      image.src = imageData  + '?' + Math.random();
-
+      // var image = document.getElementById('img');
+      // image.src = imageData;
+      // image.style.margin = "10px";
+      // image.style.display = "block"; 
+      
       var options = new FileUploadOptions();
       options.fileKey = "file";
       options.fileName = imageData.substr(imageData.lastIndexOf('/') + 1);
@@ -413,7 +423,11 @@ function cameraTakePicture() {
 
       var ft = new FileTransfer();
       ft.upload(imageData, "http://upload.digitaloneserver.com/", function(result){
-          alert('successfully uploaded ' + result.response);
+          var getResponse = jQuery.parseJSON(result.response);
+          var uploadmessage = '<img src=http://upload.digitaloneserver.com/upload/'+getResponse.file+' height="42" width="54" />';
+          var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: uploadmessage });
+          socket.emit('chatting', message);
+          alert('successfully sent.');
       }, function(error){
           alert('error : ' + JSON.stringify(error));
       }, options);
