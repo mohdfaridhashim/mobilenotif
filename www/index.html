@@ -256,7 +256,7 @@ input::placeholder
 #messages li:nth-child(odd) { background: #eee; }
 #messages { margin-bottom: 40px }
 </style>
-<!-- <script src="cordova.js"></script> -->
+<script src="cordova.js"></script>
 <script src="js/socket.io-1.2.0.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
@@ -457,6 +457,11 @@ $(document).ready(function() {
             destinationType: Camera.DestinationType.FILE_URI
         });
     });
+
+    function showGambar(gambarURI){
+      $("#gambar").attr("src",gambarURI);
+      $('#myModal').modal('toggle');
+    }
 });
 function chatPage(uid,ruid,cid){
   $('#messages').html();
@@ -471,7 +476,6 @@ function chatPage(uid,ruid,cid){
   localStorage.setItem('cid',cid);
   $("#refresh").click();
 }
-
 
 function removeStorage(){
     localStorage.removeItem("auth");
@@ -507,7 +511,7 @@ $('#logoutBTN').on('click', function(event) {
 //send message
 $('#sendText').on('click', function(event) {
     event.preventDefault();
-    var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: $('#m').val() });
+    var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: $('#m').val() , msgtype: 1 });
     socket.emit('chatting', message);
     $('#m').val('');
 });
@@ -544,8 +548,8 @@ function cameraTakePicture() {
       ft.upload(imageData, "http://upload.digitaloneserver.com/", function(result){
           var getResponse = jQuery.parseJSON(result.response);
           var uploadUri = 'http://upload.digitaloneserver.com/upload/'+getResponse.file;
-          var uploadmessage = '<img src='+uploadUri+' height="42" width="54" />';
-          var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: uploadmessage });
+          var uploadmessage = '<a href="#" onclick="showGambar('+uploadUri+')" ><img src='+uploadUri+' height="100" width="200" /></a>';
+          var message = JSON.stringify({ sender: $("#sender").val(),receiver: $("#receiver").val(),conversation: $("#conversation").val(),msg: uploadmessage, msgtype: '2' });
           socket.emit('chatting', message);
           alert('successfully sent.');
       }, function(error){
@@ -556,11 +560,6 @@ function cameraTakePicture() {
    function onFail(message) { 
       alert('Failed because: ' + message); 
    } 
-}
-
-function showGambar(gambarURI){
-  $("#gambar").attr("src",gambarURI);
-  $('#myModal').modal('toggle');
 }
 </script>
 </html>
